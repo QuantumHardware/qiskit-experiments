@@ -24,6 +24,7 @@ from numpy.random.bit_generator import BitGenerator, SeedSequence
 from qiskit.circuit import QuantumCircuit, Instruction
 from qiskit.exceptions import QiskitError
 from qiskit.providers.backend import Backend
+from qiskit.quantum_info import Operator
 from qiskit.quantum_info import Clifford
 from qiskit.quantum_info.random import random_clifford
 from qiskit_experiments.framework import BaseExperiment, Options
@@ -185,6 +186,9 @@ class StandardRB(BaseExperiment, RestlessMixin):
             A list of RB circuits.
         """
         circuits = []
+        ## >> ADDED to check inverses
+        clifford_operations = np.array([Operator(_clifford_1q_int_to_instruction(i).qc_default).data for i in range(24)])
+        ## << END
         for i, seq in enumerate(sequences):
             if (
                 self.experiment_options.full_sampling
@@ -194,7 +198,9 @@ class StandardRB(BaseExperiment, RestlessMixin):
 
             qubits = list(range(self.num_qubits))
             circ = QuantumCircuit(self.num_qubits)
+
             circ.barrier(qubits)
+
             for elem in seq:
                 circ.append(self._to_instruction(elem), qubits)
                 circ.barrier(qubits)
@@ -203,9 +209,18 @@ class StandardRB(BaseExperiment, RestlessMixin):
             for elem in seq[len(prev_seq) :]:
                 prev_elem = self.__compose_clifford(prev_elem, elem)
             prev_seq = seq
+            
+            ## >> MODIFIED FROM 
+            # inv = self.__adjoint_clifford(prev_elem)
+            # circ.append(self._to_instruction(inv), qubits)
+            # -- TO
             inv = self.__adjoint_clifford(prev_elem)
+            target = Operator(inv).data
+            inv_index = np.argmin((abs(np.array(clifford_operations) - target)**2).sum(axis=1).sum(axis=1))
+            circ.append(self._to_instruction(inv_index), qubits)
+            ## << END
 
-            circ.append(self._to_instruction(inv), qubits)
+            
             circ.measure_all()  # includes insertion of the barrier before measurement
             circuits.append(circ)
         return circuits
@@ -225,7 +240,7 @@ class StandardRB(BaseExperiment, RestlessMixin):
         # Switching for speed up
         if isinstance(elem, Integral):
             if self.num_qubits == 1:
-                return _clifford_1q_int_to_instruction(elem)
+                return _clifford_1q_int_to_instruction(elem).qc_custom
             if self.num_qubits == 2:
                 return _clifford_2q_int_to_instruction(elem)
         return elem.to_instruction()
@@ -242,9 +257,17 @@ class StandardRB(BaseExperiment, RestlessMixin):
         # Integer clifford composition has not yet supported
         if self.num_qubits == 1:
             if isinstance(lop, Integral):
-                lop = CliffordUtils.clifford_1_qubit(lop)
+                ## >> MODIFIED FROM
+                ## lop = CliffordUtils.clifford_1_qubit(lop)
+                ## -- TO 
+                lop = CliffordUtils.clifford_1_qubit(lop).qc_default
+                ## END
             if isinstance(rop, Integral):
-                rop = CliffordUtils.clifford_1_qubit(rop)
+                ## >> MODIFIED FROM
+                ## rop = CliffordUtils.clifford_1_qubit(rop)
+                ## -- TO
+                rop = CliffordUtils.clifford_1_qubit(rop).qc_default
+                ## << END
         if self.num_qubits == 2:
             if isinstance(lop, Integral):
                 lop = CliffordUtils.clifford_2_qubit(lop)
@@ -257,11 +280,18 @@ class StandardRB(BaseExperiment, RestlessMixin):
         # Integer clifford inversion has not yet supported
         if isinstance(op, Integral):
             if self.num_qubits == 1:
-                return CliffordUtils.clifford_1_qubit(op).adjoint()
+                ## >> MODIFIED FROM
+                ## return CliffordUtils.clifford_1_qubit(op).adjoint()
+                ## -- TO
+                return Clifford(CliffordUtils.clifford_1_qubit(op)).adjoint()
+                ## << END
             if self.num_qubits == 2:
                 return CliffordUtils.clifford_2_qubit(op).adjoint()
-        return op.adjoint()
-
+        ## >> MODIFIED FROM
+        ## return op.adjoint()
+        ## -- TO
+        return Clifford(op).adjoint()
+        ## << END
     def _transpiled_circuits(self) -> List[QuantumCircuit]:
         """Return a list of experiment circuits, transpiled."""
         # TODO: Custom transpilation (without calling transpile()) for 1Q and 2Q cases

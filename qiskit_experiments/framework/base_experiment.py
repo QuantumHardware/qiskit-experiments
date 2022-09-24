@@ -247,6 +247,11 @@ class BaseExperiment(ABC, StoreInitArgs):
         # Generate and transpile circuits
         transpiled_circuits = experiment._transpiled_circuits()
 
+        # >>> added for check transpiled circuit
+        self.transpiled_circuits = transpiled_circuits
+        # <<< added for check transpiled circuit
+        
+        
         # Initialize result container
         experiment_data = experiment._initialize_experiment_data()
 

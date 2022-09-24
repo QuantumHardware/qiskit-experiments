@@ -32,7 +32,7 @@ with open(README_PATH) as readme_file:
     README = readme_file.read()
 
 setup(
-    name="qiskit-experiments",
+    name="qiskit-experiments-modified",
     version=version,
     description="Software for developing quantum computing programs",
     long_description=README,
