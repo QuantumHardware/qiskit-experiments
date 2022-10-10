@@ -70,7 +70,9 @@ def analysis_result_to_repr(result: AnalysisResultData) -> str:
         AnalysisError: When the result data is not likely fit parameter.
     """
     if not isinstance(result.value, (float, UFloat)):
-        raise AnalysisError(f"Result data {result.name} is not a valid fit parameter data type.")
+        raise AnalysisError(
+            f"Result data {result.name} is not a valid fit parameter data type."
+        )
 
     unit = result.extra.get("unit", None)
 

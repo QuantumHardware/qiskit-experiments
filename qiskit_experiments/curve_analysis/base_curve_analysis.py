@@ -22,7 +22,12 @@ import lmfit
 
 from qiskit_experiments.data_processing import DataProcessor
 from qiskit_experiments.data_processing.processor_library import get_processor
-from qiskit_experiments.framework import BaseAnalysis, AnalysisResultData, Options, ExperimentData
+from qiskit_experiments.framework import (
+    BaseAnalysis,
+    AnalysisResultData,
+    Options,
+    ExperimentData,
+)
 from .curve_data import CurveData, ParameterRepr, CurveFitResult
 from .visualization import MplCurveDrawer, BaseCurveDrawer
 
@@ -376,7 +381,9 @@ class BaseCurveAnalysis(BaseAnalysis, ABC):
         """
         # Initialize data processor
         # TODO move this to base analysis in follow-up
-        data_processor = self.options.data_processor or get_processor(experiment_data, self.options)
+        data_processor = self.options.data_processor or get_processor(
+            experiment_data, self.options
+        )
 
         if not data_processor.is_trained:
             data_processor.train(data=experiment_data.data())

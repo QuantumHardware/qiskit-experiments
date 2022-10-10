@@ -86,7 +86,9 @@ class MplCurveDrawer(BaseCurveDrawer):
                             if isinstance(label, list):
                                 # Y label can be given as a list for each sub axis
                                 label = label[i]
-                            sub_ax.set_ylabel(label, fontsize=self.options.axis_label_size)
+                            sub_ax.set_ylabel(
+                                label, fontsize=self.options.axis_label_size
+                            )
                     if i != n_rows - 1:
                         # remove x axis except for most-bottom plot
                         sub_ax.set_xticklabels([])
@@ -97,7 +99,9 @@ class MplCurveDrawer(BaseCurveDrawer):
                             if isinstance(label, list):
                                 # X label can be given as a list for each sub axis
                                 label = label[j]
-                            sub_ax.set_xlabel(label, fontsize=self.options.axis_label_size)
+                            sub_ax.set_xlabel(
+                                label, fontsize=self.options.axis_label_size
+                            )
                     if j == 0 or i == n_rows - 1:
                         # Set label size for outer axes where labels are drawn
                         sub_ax.tick_params(labelsize=self.options.tick_label_size)

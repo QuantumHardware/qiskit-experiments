@@ -21,7 +21,9 @@ import qiskit.pulse as pulse
 from qiskit.pulse import InstructionScheduleMap
 
 from qiskit_experiments.test.mock_iq_backend import MockIQBackend
-from qiskit_experiments.test.mock_iq_helpers import MockIQHalfAngleHelper as HalfAngleHelper
+from qiskit_experiments.test.mock_iq_helpers import (
+    MockIQHalfAngleHelper as HalfAngleHelper,
+)
 from qiskit_experiments.library import HalfAngle
 
 
@@ -63,10 +65,14 @@ class TestHalfAngle(QiskitExperimentsTestCase):
 
         for idx, circ in enumerate(circuits):
             self.assertEqual(circ.count_ops()["sx"], idx * 2 + 2)
-            self.assertEqual(circ.calibrations["sx"][((qubit,), ())], pulse.Schedule(name="sx"))
+            self.assertEqual(
+                circ.calibrations["sx"][((qubit,), ())], pulse.Schedule(name="sx")
+            )
             if idx > 0:
                 self.assertEqual(circ.count_ops()["y"], idx)
-                self.assertEqual(circ.calibrations["y"][((qubit,), ())], pulse.Schedule(name="y"))
+                self.assertEqual(
+                    circ.calibrations["y"][((qubit,), ())], pulse.Schedule(name="y")
+                )
 
     def test_experiment_config(self):
         """Test converting to and from config works"""

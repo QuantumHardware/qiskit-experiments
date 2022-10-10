@@ -163,7 +163,7 @@ class RBAnalysis(curve.CurveAnalysis):
         # TODO Eventually move this to data processor, then create RB data processor.
 
         # take average over the same x value by keeping sigma
-        data_allocation, xdata, ydata, sigma, shots = curve.data_processing.multi_mean_xy_data(
+        (data_allocation, xdata, ydata, sigma, shots,) = curve.data_processing.multi_mean_xy_data(
             series=curve_data.data_allocation,
             xdata=curve_data.x,
             ydata=curve_data.y,

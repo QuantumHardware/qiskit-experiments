@@ -77,7 +77,9 @@ class MplDrawSingleCanvas:
             figure = axis.get_figure()
 
         # draw all curves on the same canvas
-        for series_def, raw_samp, fit_samp in zip(series_defs, raw_samples, fit_samples):
+        for series_def, raw_samp, fit_samp in zip(
+            series_defs, raw_samples, fit_samples
+        ):
             draw_single_curve_mpl(
                 axis=axis,
                 series_def=series_def,
@@ -101,8 +103,12 @@ class MplDrawSingleCanvas:
                 scaled_maxv, prefix = detach_prefix(maxv, decimal=3)
                 prefactor = scaled_maxv / maxv
                 # pylint: disable=cell-var-from-loop
-                sub_axis.set_major_formatter(FuncFormatter(lambda x, p: f"{x * prefactor: .3g}"))
-                sub_axis.set_label_text(f"{label} [{prefix}{unit}]", fontsize=style.axis_label_size)
+                sub_axis.set_major_formatter(
+                    FuncFormatter(lambda x, p: f"{x * prefactor: .3g}")
+                )
+                sub_axis.set_label_text(
+                    f"{label} [{prefix}{unit}]", fontsize=style.axis_label_size
+                )
             else:
                 sub_axis.set_label_text(label, fontsize=style.axis_label_size)
                 axis.ticklabel_format(axis=this_axis, style="sci", scilimits=(-3, 3))
@@ -127,7 +133,9 @@ class MplDrawSingleCanvas:
                 transform=axis.transAxes,
             )
 
-            bbox_props = dict(boxstyle="square, pad=0.3", fc="white", ec="black", lw=1, alpha=0.8)
+            bbox_props = dict(
+                boxstyle="square, pad=0.3", fc="white", ec="black", lw=1, alpha=0.8
+            )
             report_handler.set_bbox(bbox_props)
 
         axis.tick_params(labelsize=style.tick_label_size)
@@ -238,8 +246,12 @@ class MplDrawMultiCanvasVstack:
                 scaled_maxv, prefix = detach_prefix(maxv, decimal=3)
                 prefactor = scaled_maxv / maxv
                 # pylint: disable=cell-var-from-loop
-                yaxis.set_major_formatter(FuncFormatter(lambda x, p: f"{x * prefactor: .3g}"))
-                yaxis.set_label_text(f"{label} [{prefix}{unit}]", fontsize=style.axis_label_size)
+                yaxis.set_major_formatter(
+                    FuncFormatter(lambda x, p: f"{x * prefactor: .3g}")
+                )
+                yaxis.set_label_text(
+                    f"{label} [{prefix}{unit}]", fontsize=style.axis_label_size
+                )
             else:
                 inset_axis.ticklabel_format(axis="y", style="sci", scilimits=(-3, 3))
                 yaxis.set_label_text(label, fontsize=style.axis_label_size)
@@ -256,8 +268,12 @@ class MplDrawMultiCanvasVstack:
             scaled_maxv, prefix = detach_prefix(maxv, decimal=3)
             prefactor = scaled_maxv / maxv
             # pylint: disable=cell-var-from-loop
-            xaxis.set_major_formatter(FuncFormatter(lambda x, p: f"{x * prefactor: .3g}"))
-            xaxis.set_label_text(f"{label} [{prefix}{unit}]", fontsize=style.axis_label_size)
+            xaxis.set_major_formatter(
+                FuncFormatter(lambda x, p: f"{x * prefactor: .3g}")
+            )
+            xaxis.set_label_text(
+                f"{label} [{prefix}{unit}]", fontsize=style.axis_label_size
+            )
         else:
             axis.ticklabel_format(axis="x", style="sci", scilimits=(-3, 3))
             xaxis.set_label_text(label, fontsize=style.axis_label_size)
@@ -279,7 +295,9 @@ class MplDrawMultiCanvasVstack:
                 transform=axis.transAxes,
             )
 
-            bbox_props = dict(boxstyle="square, pad=0.3", fc="white", ec="black", lw=1, alpha=0.8)
+            bbox_props = dict(
+                boxstyle="square, pad=0.3", fc="white", ec="black", lw=1, alpha=0.8
+            )
             report_handler.set_bbox(bbox_props)
 
         axis.tick_params(labelsize=style.tick_label_size)

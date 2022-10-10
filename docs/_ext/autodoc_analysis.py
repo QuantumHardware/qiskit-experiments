@@ -31,7 +31,9 @@ class AnalysisDocumenter(ClassDocumenter):
     option_spec = dict(ClassDocumenter.option_spec)
 
     @classmethod
-    def can_document_member(cls, member: Any, membername: str, isattr: bool, parent: Any) -> bool:
+    def can_document_member(
+        cls, member: Any, membername: str, isattr: bool, parent: Any
+    ) -> bool:
         return isinstance(member, BaseAnalysis)
 
     def add_content(self, more_content: Any, no_docstring: bool = False) -> None:
@@ -49,7 +51,9 @@ class AnalysisDocumenter(ClassDocumenter):
         )
 
         # write introduction
-        for i, line in enumerate(self.process_doc(class_doc_parser.generate_class_docs())):
+        for i, line in enumerate(
+            self.process_doc(class_doc_parser.generate_class_docs())
+        ):
             self.add_line(line, sourcename, i)
         self.add_line("", sourcename)
 
@@ -61,5 +65,7 @@ class AnalysisDocumenter(ClassDocumenter):
 
 def setup(app: Sphinx):
     existing_documenter = app.registry.documenters.get(AnalysisDocumenter.objtype)
-    if existing_documenter is None or not issubclass(existing_documenter, AnalysisDocumenter):
+    if existing_documenter is None or not issubclass(
+        existing_documenter, AnalysisDocumenter
+    ):
         app.add_autodocumenter(AnalysisDocumenter, override=True)

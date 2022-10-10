@@ -61,7 +61,9 @@ class TestComposite(QiskitExperimentsTestCase):
 
         par_exp = ParallelExperiment([exp0, exp2])
 
-        self.assertEqual(par_exp.experiment_options, par_exp._default_experiment_options())
+        self.assertEqual(
+            par_exp.experiment_options, par_exp._default_experiment_options()
+        )
         self.assertEqual(par_exp.run_options, Options(meas_level=2))
         self.assertEqual(par_exp.transpile_options, Options(optimization_level=0))
         self.assertEqual(par_exp.analysis.options, par_exp.analysis._default_options())
@@ -216,7 +218,9 @@ class TestCompositeExperimentData(QiskitExperimentsTestCase):
 
         self.rootdata.service = IBMExperimentService(local=True, local_save=False)
         self.rootdata.save()
-        loaded_data = ExperimentData.load(self.rootdata.experiment_id, self.rootdata.service)
+        loaded_data = ExperimentData.load(
+            self.rootdata.experiment_id, self.rootdata.service
+        )
         self.check_if_equal(loaded_data, self.rootdata, is_a_copy=False)
 
     def test_composite_save_metadata(self):
@@ -225,7 +229,9 @@ class TestCompositeExperimentData(QiskitExperimentsTestCase):
         """
         self.rootdata.service = IBMExperimentService(local=True, local_save=False)
         self.rootdata.save_metadata()
-        loaded_data = ExperimentData.load(self.rootdata.experiment_id, self.rootdata.service)
+        loaded_data = ExperimentData.load(
+            self.rootdata.experiment_id, self.rootdata.service
+        )
 
         self.check_if_equal(loaded_data, self.rootdata, is_a_copy=False)
 
@@ -522,7 +528,10 @@ class TestCompositeExperimentData(QiskitExperimentsTestCase):
                 self.assertDictEqual(circ_data["counts"], circ_counts)
 
         counts2 = [
-            [{"00": 10, "01": 10, "10": 12, "11": 20}, {"00": 12, "01": 10, "10": 7, "11": 17}],
+            [
+                {"00": 10, "01": 10, "10": 12, "11": 20},
+                {"00": 12, "01": 10, "10": 7, "11": 17},
+            ],
             [
                 {"00": 17, "01": 7, "10": 14, "11": 14},
                 {"00": 9, "01": 14, "10": 22, "11": 7},
@@ -540,7 +549,9 @@ class TestCompositeExperimentData(QiskitExperimentsTestCase):
             [{"0": 20, "1": 32}, {"0": 22, "1": 24}],
         ]
 
-        self.assertEqual(len(expdata.child_data(1).child_data(0).child_data()), len(counts3))
+        self.assertEqual(
+            len(expdata.child_data(1).child_data(0).child_data()), len(counts3)
+        )
         for childdata, child_counts in zip(
             expdata.child_data(1).child_data(0).child_data(), counts3
         ):
@@ -574,8 +585,12 @@ class TestCompositeExperimentData(QiskitExperimentsTestCase):
         exp2.analysis.set_options(option2=opt2_val)
 
         # Check this is reflected in parallel experiment
-        self.assertEqual(par_exp.analysis.component_analysis(0).options.option1, opt1_val)
-        self.assertEqual(par_exp.analysis.component_analysis(1).options.option2, opt2_val)
+        self.assertEqual(
+            par_exp.analysis.component_analysis(0).options.option1, opt1_val
+        )
+        self.assertEqual(
+            par_exp.analysis.component_analysis(1).options.option2, opt2_val
+        )
 
     @data(
         ["0x0", "0x2", "0x3", "0x0", "0x0", "0x1", "0x3", "0x0", "0x2", "0x3"],
@@ -655,7 +670,9 @@ class TestCompositeExperimentData(QiskitExperimentsTestCase):
 
         test_data.add_data(datum)
 
-        all_sub_data = CompositeAnalysis([])._marginalized_component_data(test_data.data())
+        all_sub_data = CompositeAnalysis([])._marginalized_component_data(
+            test_data.data()
+        )
         for idx, sub_data in enumerate(all_sub_data):
             expected = {
                 "metadata": {"experiment_type": "FineXAmplitude", "qubits": [idx]},
@@ -697,7 +714,9 @@ class TestCompositeExperimentData(QiskitExperimentsTestCase):
 
         test_data.add_data(datum)
 
-        all_sub_data = CompositeAnalysis([])._marginalized_component_data(test_data.data())
+        all_sub_data = CompositeAnalysis([])._marginalized_component_data(
+            test_data.data()
+        )
         for idx, sub_data in enumerate(all_sub_data):
             expected = {
                 "metadata": {"experiment_type": "FineXAmplitude", "qubits": [idx]},
@@ -742,7 +761,9 @@ class TestBatchTranspileOptions(QiskitExperimentsTestCase):
 
         def __init__(self, qubits, backend=None):
             super().__init__(
-                qubits, analysis=TestBatchTranspileOptions.SimpleAnalysis(), backend=backend
+                qubits,
+                analysis=TestBatchTranspileOptions.SimpleAnalysis(),
+                backend=backend,
             )
 
         def circuits(self):
@@ -802,11 +823,17 @@ class TestBatchTranspileOptions(QiskitExperimentsTestCase):
         """
         backend = Aer.get_backend("aer_simulator")
         noise_model = noise.NoiseModel()
-        noise_model.add_all_qubit_quantum_error(noise.depolarizing_error(0.5, 2), ["cx", "swap"])
+        noise_model.add_all_qubit_quantum_error(
+            noise.depolarizing_error(0.5, 2), ["cx", "swap"]
+        )
 
         expdata = self.batch2.run(backend, noise_model=noise_model, shots=1000)
         expdata.block_for_results()
 
         self.assertEqual(expdata.child_data(0).analysis_results(0).value, 8)
-        self.assertEqual(expdata.child_data(1).child_data(0).analysis_results(0).value, 16)
-        self.assertEqual(expdata.child_data(1).child_data(1).analysis_results(0).value, 4)
+        self.assertEqual(
+            expdata.child_data(1).child_data(0).analysis_results(0).value, 16
+        )
+        self.assertEqual(
+            expdata.child_data(1).child_data(1).analysis_results(0).value, 4
+        )

@@ -173,7 +173,7 @@ class InterleavedRBAnalysis(curve.CurveAnalysis):
         # TODO Eventually move this to data processor, then create RB data processor.
 
         # take average over the same x value by keeping sigma
-        data_allocation, xdata, ydata, sigma, shots = curve.data_processing.multi_mean_xy_data(
+        (data_allocation, xdata, ydata, sigma, shots,) = curve.data_processing.multi_mean_xy_data(
             series=curve_data.data_allocation,
             xdata=curve_data.x,
             ydata=curve_data.y,
@@ -245,7 +245,10 @@ class InterleavedRBAnalysis(curve.CurveAnalysis):
                 quality=quality,
                 extra={
                     "EPC_systematic_err": systematic_err,
-                    "EPC_systematic_bounds": [max(systematic_err_l, 0), systematic_err_r],
+                    "EPC_systematic_bounds": [
+                        max(systematic_err_l, 0),
+                        systematic_err_r,
+                    ],
                     **metadata,
                 },
             )

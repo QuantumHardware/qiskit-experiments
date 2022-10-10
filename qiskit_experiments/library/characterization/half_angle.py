@@ -19,7 +19,9 @@ from qiskit import QuantumCircuit
 from qiskit.providers import Backend
 
 from qiskit_experiments.framework import BaseExperiment, Options
-from qiskit_experiments.curve_analysis.standard_analysis import ErrorAmplificationAnalysis
+from qiskit_experiments.curve_analysis.standard_analysis import (
+    ErrorAmplificationAnalysis,
+)
 from qiskit_experiments.curve_analysis import ParameterRepr
 
 

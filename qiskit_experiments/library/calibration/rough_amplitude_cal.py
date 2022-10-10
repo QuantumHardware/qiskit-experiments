@@ -21,7 +21,10 @@ from qiskit.circuit import Parameter
 from qiskit.providers.backend import Backend
 
 from qiskit_experiments.framework import ExperimentData
-from qiskit_experiments.calibration_management import BaseCalibrationExperiment, Calibrations
+from qiskit_experiments.calibration_management import (
+    BaseCalibrationExperiment,
+    Calibrations,
+)
 from qiskit_experiments.library.characterization import Rabi
 from qiskit_experiments.calibration_management.update_library import BaseUpdater
 
@@ -66,7 +69,10 @@ class RoughAmplitudeCal(BaseCalibrationExperiment, Rabi):
             backend: Optional, the backend to run the experiment on.
         """
         schedule = calibrations.get_schedule(
-            schedule_name, qubit, assign_params={cal_parameter_name: Parameter("amp")}, group=group
+            schedule_name,
+            qubit,
+            assign_params={cal_parameter_name: Parameter("amp")},
+            group=group,
         )
 
         self._validate_channels(schedule, [qubit])
@@ -130,7 +136,12 @@ class RoughAmplitudeCal(BaseCalibrationExperiment, Rabi):
         """
         metadata = super()._metadata()
         param_values = []
-        for angle, param_name, schedule_name, _ in self.experiment_options.angles_schedules:
+        for (
+            angle,
+            param_name,
+            schedule_name,
+            _,
+        ) in self.experiment_options.angles_schedules:
             param_val = self._cals.get_parameter_value(
                 param_name,
                 self._physical_qubits,
@@ -213,7 +224,10 @@ class RoughXSXAmplitudeCal(RoughAmplitudeCal):
         self.experiment_options.angles_schedules = [
             AnglesSchedules(target_angle=np.pi, parameter="amp", schedule="x", previous_value=None),
             AnglesSchedules(
-                target_angle=np.pi / 2, parameter="amp", schedule="sx", previous_value=None
+                target_angle=np.pi / 2,
+                parameter="amp",
+                schedule="sx",
+                previous_value=None,
             ),
         ]
 

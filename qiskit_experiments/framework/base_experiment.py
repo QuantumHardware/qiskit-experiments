@@ -168,12 +168,16 @@ class BaseExperiment(ABC, StoreInitArgs):
         kwargs = dict(getattr(self, "__init_kwargs__", OrderedDict()))
         # Only store non-default valued options
         experiment_options = dict(
-            (key, getattr(self._experiment_options, key)) for key in self._set_experiment_options
+            (key, getattr(self._experiment_options, key))
+            for key in self._set_experiment_options
         )
         transpile_options = dict(
-            (key, getattr(self._transpile_options, key)) for key in self._set_transpile_options
+            (key, getattr(self._transpile_options, key))
+            for key in self._set_transpile_options
         )
-        run_options = dict((key, getattr(self._run_options, key)) for key in self._set_run_options)
+        run_options = dict(
+            (key, getattr(self._run_options, key)) for key in self._set_run_options
+        )
         return ExperimentConfig(
             cls=type(self),
             args=args,
@@ -245,13 +249,11 @@ class BaseExperiment(ABC, StoreInitArgs):
         experiment._finalize()
 
         # Generate and transpile circuits
-        transpiled_circuits = experiment._transpiled_circuits()
-
         # >>> added for check transpiled circuit
+        transpiled_circuits = experiment._transpiled_circuits()
         self.transpiled_circuits = transpiled_circuits
         # <<< added for check transpiled circuit
-        
-        
+
         # Initialize result container
         experiment_data = experiment._initialize_experiment_data()
 
@@ -288,7 +290,8 @@ class BaseExperiment(ABC, StoreInitArgs):
         if max_circuits and len(circuits) > max_circuits:
             # Split jobs for backends that have a maximum job size
             job_circuits = [
-                circuits[i : i + max_circuits] for i in range(0, len(circuits), max_circuits)
+                circuits[i : i + max_circuits]
+                for i in range(0, len(circuits), max_circuits)
             ]
         else:
             # Run as single job
@@ -322,7 +325,13 @@ class BaseExperiment(ABC, StoreInitArgs):
         """
         transpile_opts = copy.copy(self.transpile_options.__dict__)
         transpile_opts["initial_layout"] = list(self.physical_qubits)
-        transpiled = transpile(self.circuits(), self.backend, **transpile_opts)
+        circuits = self.circuits()
+        transpiled = transpile(
+            circuits,
+            # self.circuits(),
+            self.backend,
+            **transpile_opts,
+        )
 
         return transpiled
 

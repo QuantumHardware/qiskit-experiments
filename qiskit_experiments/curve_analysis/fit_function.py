@@ -96,7 +96,11 @@ def exponential_decay(
 
 
 def gaussian(
-    x: np.ndarray, amp: float = 1.0, sigma: float = 1.0, x0: float = 0.0, baseline: float = 0.0
+    x: np.ndarray,
+    amp: float = 1.0,
+    sigma: float = 1.0,
+    x0: float = 0.0,
+    baseline: float = 0.0,
 ) -> np.ndarray:
     r"""Gaussian function
 
@@ -107,7 +111,11 @@ def gaussian(
 
 
 def sqrt_lorentzian(
-    x: np.ndarray, amp: float = 1.0, kappa: float = 1.0, x0: float = 0.0, baseline: float = 0.0
+    x: np.ndarray,
+    amp: float = 1.0,
+    kappa: float = 1.0,
+    x0: float = 0.0,
+    baseline: float = 0.0,
 ) -> np.ndarray:
     r"""Square-root Lorentzian function for spectroscopy.
 
@@ -131,7 +139,10 @@ def cos_decay(
         y = {\rm amp} \cdot e^{-x/\tau} \cos\left(2 \pi \cdot {\rm freq} \cdot x
         + {\rm phase}\right) + {\rm baseline}
     """
-    return exponential_decay(x, lamb=1 / tau) * cos(x, amp=amp, freq=freq, phase=phase) + baseline
+    return (
+        exponential_decay(x, lamb=1 / tau) * cos(x, amp=amp, freq=freq, phase=phase)
+        + baseline
+    )
 
 
 def sin_decay(
@@ -148,12 +159,19 @@ def sin_decay(
         y = {\rm amp} \cdot e^{-x/\tau} \sin\left(2 \pi \cdot {\rm freq} \cdot x
         + {\rm phase}\right) + {\rm baseline}
     """
-    return exponential_decay(x, lamb=1 / tau) * sin(x, amp=amp, freq=freq, phase=phase) + baseline
+    return (
+        exponential_decay(x, lamb=1 / tau) * sin(x, amp=amp, freq=freq, phase=phase)
+        + baseline
+    )
 
 
 @deprecated_function("0.5", "Now fit function can be defined with Python string.")
 def bloch_oscillation_x(
-    x: np.ndarray, px: float = 0.0, py: float = 0.0, pz: float = 0.0, baseline: float = 0.0
+    x: np.ndarray,
+    px: float = 0.0,
+    py: float = 0.0,
+    pz: float = 0.0,
+    baseline: float = 0.0,
 ):
     r"""Bloch oscillation in x basis.
 
@@ -166,12 +184,18 @@ def bloch_oscillation_x(
     """
     w = np.sqrt(px**2 + py**2 + pz**2)
 
-    return (-pz * px + pz * px * np.cos(w * x) + w * py * np.sin(w * x)) / (w**2) + baseline
+    return (-pz * px + pz * px * np.cos(w * x) + w * py * np.sin(w * x)) / (
+        w**2
+    ) + baseline
 
 
 @deprecated_function("0.5", "Now fit function can be defined with Python string.")
 def bloch_oscillation_y(
-    x: np.ndarray, px: float = 0.0, py: float = 0.0, pz: float = 0.0, baseline: float = 0.0
+    x: np.ndarray,
+    px: float = 0.0,
+    py: float = 0.0,
+    pz: float = 0.0,
+    baseline: float = 0.0,
 ):
     r"""Bloch oscillation in y basis.
 
@@ -184,12 +208,18 @@ def bloch_oscillation_y(
     """
     w = np.sqrt(px**2 + py**2 + pz**2)
 
-    return (pz * py - pz * py * np.cos(w * x) - w * px * np.sin(w * x)) / (w**2) + baseline
+    return (pz * py - pz * py * np.cos(w * x) - w * px * np.sin(w * x)) / (
+        w**2
+    ) + baseline
 
 
 @deprecated_function("0.5", "Now fit function can be defined with Python string.")
 def bloch_oscillation_z(
-    x: np.ndarray, px: float = 0.0, py: float = 0.0, pz: float = 0.0, baseline: float = 0.0
+    x: np.ndarray,
+    px: float = 0.0,
+    py: float = 0.0,
+    pz: float = 0.0,
+    baseline: float = 0.0,
 ):
     r"""Bloch oscillation in z basis.
 

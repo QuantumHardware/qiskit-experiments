@@ -37,7 +37,11 @@ try:
 except ImportError:
     HAS_IBMQ = False
 
-from .exceptions import ExperimentEntryNotFound, ExperimentEntryExists, ExperimentDataError
+from .exceptions import (
+    ExperimentEntryNotFound,
+    ExperimentEntryExists,
+    ExperimentDataError,
+)
 from ..version import __version__ as experiments_version
 
 LOG = logging.getLogger(__name__)
@@ -48,7 +52,10 @@ def qiskit_version():
     try:
         return pkg_resources.get_distribution("qiskit").version
     except Exception:  # pylint: disable=broad-except
-        return {"qiskit-terra": terra_version, "qiskit-experiments": experiments_version}
+        return {
+            "qiskit-terra": terra_version,
+            "qiskit-experiments": experiments_version,
+        }
 
 
 def parse_timestamp(utc_dt: Union[datetime, str]) -> datetime:
@@ -97,7 +104,11 @@ def plot_to_svg_bytes(figure: "pyplot.Figure") -> bytes:
     opaque_color = list(figure.get_facecolor())
     opaque_color[3] = 1.0  # set alpha to opaque
     figure.savefig(
-        buf, format="svg", facecolor=tuple(opaque_color), edgecolor="none", bbox_inches="tight"
+        buf,
+        format="svg",
+        facecolor=tuple(opaque_color),
+        edgecolor="none",
+        bbox_inches="tight",
     )
     buf.seek(0)
     figure_data = buf.read()

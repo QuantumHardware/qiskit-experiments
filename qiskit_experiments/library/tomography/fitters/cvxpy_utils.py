@@ -119,7 +119,10 @@ def set_default_sdp_solver(solver_kwargs: dict):
 
 
 def complex_matrix_variable(
-    dim: int, hermitian: bool = False, psd: bool = False, trace: Optional[complex] = None
+    dim: int,
+    hermitian: bool = False,
+    psd: bool = False,
+    trace: Optional[complex] = None,
 ) -> Tuple[Variable, Variable, List[Constraint]]:
     """Construct a pair of real variables and constraints for a Hermitian matrix
 
@@ -187,7 +190,10 @@ def trace_constraint(mat_r: Variable, mat_i: Variable, trace: complex) -> List[C
     Returns:
         A list of constraints on the real and imaginary parts.
     """
-    return [cvxpy.trace(mat_r) == cvxpy.real(trace), cvxpy.trace(mat_i) == cvxpy.imag(trace)]
+    return [
+        cvxpy.trace(mat_r) == cvxpy.real(trace),
+        cvxpy.trace(mat_i) == cvxpy.imag(trace),
+    ]
 
 
 def trace_preserving_constraint(mat_r: Variable, mat_i: Variable) -> List[Constraint]:

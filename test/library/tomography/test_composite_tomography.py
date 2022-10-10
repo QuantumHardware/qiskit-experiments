@@ -58,7 +58,8 @@ class TestCompositeTomography(QiskitExperimentsTestCase):
             # Check state is density matrix
             state = filter_results(results, "state").value
             self.assertTrue(
-                isinstance(state, qi.DensityMatrix), msg="fitted state is not density matrix"
+                isinstance(state, qi.DensityMatrix),
+                msg="fitted state is not density matrix",
             )
 
             # Check fit state fidelity
@@ -67,7 +68,9 @@ class TestCompositeTomography(QiskitExperimentsTestCase):
 
             # Manually check fidelity
             target_fid = qi.state_fidelity(state, targets[i], validate=False)
-            self.assertAlmostEqual(fid, target_fid, places=6, msg="result fidelity is incorrect")
+            self.assertAlmostEqual(
+                fid, target_fid, places=6, msg="result fidelity is incorrect"
+            )
 
     def test_parallel_qst_exp(self):
         """Test parallel state tomography experiment"""
@@ -97,7 +100,8 @@ class TestCompositeTomography(QiskitExperimentsTestCase):
             # Check state is density matrix
             state = filter_results(results, "state").value
             self.assertTrue(
-                isinstance(state, qi.DensityMatrix), msg="fitted state is not density matrix"
+                isinstance(state, qi.DensityMatrix),
+                msg="fitted state is not density matrix",
             )
 
             # Check fit state fidelity
@@ -106,7 +110,9 @@ class TestCompositeTomography(QiskitExperimentsTestCase):
 
             # Manually check fidelity
             target_fid = qi.state_fidelity(state, targets[i], validate=False)
-            self.assertAlmostEqual(fid, target_fid, places=6, msg="result fidelity is incorrect")
+            self.assertAlmostEqual(
+                fid, target_fid, places=6, msg="result fidelity is incorrect"
+            )
 
     def test_batch_qpt_exp_with_measurement_qubits(self):
         """Test batch process tomography experiment with kwargs"""
@@ -124,7 +130,11 @@ class TestCompositeTomography(QiskitExperimentsTestCase):
         targets = []
         for i in range(nq):
             targets.append(ops[i])
-            exps.append(ProcessTomography(circuit, measurement_qubits=[i], preparation_qubits=[i]))
+            exps.append(
+                ProcessTomography(
+                    circuit, measurement_qubits=[i], preparation_qubits=[i]
+                )
+            )
 
         # Run batch experiments
         backend = AerSimulator(seed_simulator=9000)
@@ -139,15 +149,21 @@ class TestCompositeTomography(QiskitExperimentsTestCase):
 
             # Check state is density matrix
             state = filter_results(results, "state").value
-            self.assertTrue(isinstance(state, qi.Choi), msg="fitted state is not a Choi matrix")
+            self.assertTrue(
+                isinstance(state, qi.Choi), msg="fitted state is not a Choi matrix"
+            )
 
             # Check fit state fidelity
             fid = filter_results(results, "process_fidelity").value
             self.assertGreater(fid, f_threshold, msg="fit fidelity is low")
 
             # Manually check fidelity
-            target_fid = qi.process_fidelity(state, targets[i], require_tp=False, require_cp=False)
-            self.assertAlmostEqual(fid, target_fid, places=6, msg="result fidelity is incorrect")
+            target_fid = qi.process_fidelity(
+                state, targets[i], require_tp=False, require_cp=False
+            )
+            self.assertAlmostEqual(
+                fid, target_fid, places=6, msg="result fidelity is incorrect"
+            )
 
     def test_parallel_qpt_exp(self):
         """Test parallel process tomography experiment"""
@@ -176,15 +192,21 @@ class TestCompositeTomography(QiskitExperimentsTestCase):
 
             # Check state is density matrix
             state = filter_results(results, "state").value
-            self.assertTrue(isinstance(state, qi.Choi), msg="fitted state is not a Choi matrix")
+            self.assertTrue(
+                isinstance(state, qi.Choi), msg="fitted state is not a Choi matrix"
+            )
 
             # Check fit state fidelity
             fid = filter_results(results, "process_fidelity").value
             self.assertGreater(fid, f_threshold, msg="fit fidelity is low")
 
             # Manually check fidelity
-            target_fid = qi.process_fidelity(state, targets[i], require_tp=False, require_cp=False)
-            self.assertAlmostEqual(fid, target_fid, places=6, msg="result fidelity is incorrect")
+            target_fid = qi.process_fidelity(
+                state, targets[i], require_tp=False, require_cp=False
+            )
+            self.assertAlmostEqual(
+                fid, target_fid, places=6, msg="result fidelity is incorrect"
+            )
 
     def test_mixed_batch_exp(self):
         """Test batch state and process tomography experiment"""
@@ -216,7 +238,9 @@ class TestCompositeTomography(QiskitExperimentsTestCase):
 
         # Manually check fidelity
         target_fid = qi.state_fidelity(state, state_target, validate=False)
-        self.assertAlmostEqual(state_fid, target_fid, places=6, msg="result fidelity is incorrect")
+        self.assertAlmostEqual(
+            state_fid, target_fid, places=6, msg="result fidelity is incorrect"
+        )
 
         # Check process tomo results
         chan_results = par_data.child_data(1).analysis_results()
@@ -227,5 +251,9 @@ class TestCompositeTomography(QiskitExperimentsTestCase):
         self.assertGreater(chan_fid, f_threshold, msg="fit fidelity is low")
 
         # Manually check fidelity
-        target_fid = qi.process_fidelity(chan, chan_target, require_cp=False, require_tp=False)
-        self.assertAlmostEqual(chan_fid, target_fid, places=6, msg="result fidelity is incorrect")
+        target_fid = qi.process_fidelity(
+            chan, chan_target, require_cp=False, require_tp=False
+        )
+        self.assertAlmostEqual(
+            chan_fid, target_fid, places=6, msg="result fidelity is incorrect"
+        )

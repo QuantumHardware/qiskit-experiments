@@ -69,7 +69,8 @@ class TestLocalBasis(QiskitExperimentsTestCase):
                     mat = basis.matrix(index, outcome, qubits)
                     expval = state.expectation_value(mat)
                     self.assertTrue(
-                        isclose(expval, 1.0), msg=f"{basis.name}, index={index}, outcome={outcome}"
+                        isclose(expval, 1.0),
+                        msg=f"{basis.name}, index={index}, outcome={outcome}",
                     )
 
     def _outcome_tup_to_int(self, outcome):
@@ -193,8 +194,12 @@ class TestLocalBasis(QiskitExperimentsTestCase):
 
         # Check states
         indices = it.product(range(size), repeat=2)
-        states0 = qubit_states[qubits[0]] if qubits[0] in qubit_states else default_states
-        states1 = qubit_states[qubits[1]] if qubits[1] in qubit_states else default_states
+        states0 = (
+            qubit_states[qubits[0]] if qubits[0] in qubit_states else default_states
+        )
+        states1 = (
+            qubit_states[qubits[1]] if qubits[1] in qubit_states else default_states
+        )
         for index in indices:
             basis_state = qi.DensityMatrix(basis.matrix(index, qubits))
             target = qi.DensityMatrix(states0[index[0]]).expand(states1[index[1]])

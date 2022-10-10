@@ -57,6 +57,8 @@ def _used_in_calls(schedule_name: str, schedule: ScheduleBlock) -> bool:
                 )
 
         if isinstance(block, ScheduleBlock):
-            blocks_have_schedule = blocks_have_schedule or _used_in_calls(schedule_name, block)
+            blocks_have_schedule = blocks_have_schedule or _used_in_calls(
+                schedule_name, block
+            )
 
     return blocks_have_schedule

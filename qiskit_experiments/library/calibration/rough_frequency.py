@@ -15,7 +15,9 @@
 from typing import Iterable, Optional
 from qiskit.providers.backend import Backend
 
-from qiskit_experiments.library.characterization.qubit_spectroscopy import QubitSpectroscopy
+from qiskit_experiments.library.characterization.qubit_spectroscopy import (
+    QubitSpectroscopy,
+)
 from qiskit_experiments.library.characterization.ef_spectroscopy import EFSpectroscopy
 from qiskit_experiments.calibration_management.update_library import Frequency
 from qiskit_experiments.calibration_management.calibrations import Calibrations

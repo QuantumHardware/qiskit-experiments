@@ -241,7 +241,8 @@ class QuantumVolumeAnalysis(BaseAnalysis):
 
     @staticmethod
     def _format_plot(
-        hop_result: AnalysisResultData, ax: Optional["matplotlib.pyplot.AxesSubplot"] = None
+        hop_result: AnalysisResultData,
+        ax: Optional["matplotlib.pyplot.AxesSubplot"] = None,
     ):
         """Format the QV plot
 

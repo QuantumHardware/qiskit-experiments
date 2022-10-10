@@ -21,7 +21,10 @@ with open("requirements.txt") as f:
 
 
 version_path = os.path.abspath(
-    os.path.join(os.path.join(os.path.dirname(__file__), "qiskit_experiments"), "VERSION.txt")
+    os.path.join(
+        os.path.join(os.path.dirname(__file__), "qiskit_experiments_modified"),
+        "VERSION.txt",
+    )
 )
 with open(version_path, "r") as fd:
     version = fd.read().rstrip()

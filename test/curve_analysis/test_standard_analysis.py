@@ -36,14 +36,18 @@ class TestErrorAmplificationAnalysis(QiskitExperimentsTestCase):
         results = []
         for x, y in zip(xvals, yvals):
             n1 = int(shots * y)
-            results.append({"counts": {"0": shots - n1, "1": n1}, "metadata": {"xval": x}})
+            results.append(
+                {"counts": {"0": shots - n1, "1": n1}, "metadata": {"xval": x}}
+            )
 
         expdata = ExperimentData()
         expdata.add_data(results)
 
         return expdata
 
-    @data(-0.1, -0.08, -0.06, -0.04, -0.02, -0.01, 0.0, 0.01, 0.02, 0.04, 0.06, 0.08, 0.1)
+    @data(
+        -0.1, -0.08, -0.06, -0.04, -0.02, -0.01, 0.0, 0.01, 0.02, 0.04, 0.06, 0.08, 0.1
+    )
     def test_fit_vals(self, d_theta_targ):
         """Test for fitting."""
 

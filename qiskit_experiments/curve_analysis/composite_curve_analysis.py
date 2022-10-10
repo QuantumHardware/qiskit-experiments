@@ -21,7 +21,12 @@ import lmfit
 import numpy as np
 from uncertainties import unumpy as unp, UFloat
 
-from qiskit_experiments.framework import BaseAnalysis, ExperimentData, AnalysisResultData, Options
+from qiskit_experiments.framework import (
+    BaseAnalysis,
+    ExperimentData,
+    AnalysisResultData,
+    Options,
+)
 from .base_curve_analysis import BaseCurveAnalysis, PARAMS_ENTRY_PREFIX
 from .curve_data import CurveFitResult
 from .utils import analysis_result_to_repr, eval_with_uncertainties
@@ -331,7 +336,9 @@ class CompositeCurveAnalysis(BaseAnalysis):
             # Add raw data points
             if self.options.return_data_points:
                 analysis_results.extend(
-                    analysis._create_curve_data(curve_data=formatted_data, models=analysis.models)
+                    analysis._create_curve_data(
+                        curve_data=formatted_data, models=analysis.models
+                    )
                 )
 
             fit_dataset[analysis.name] = fit_data
@@ -353,7 +360,9 @@ class CompositeCurveAnalysis(BaseAnalysis):
                     report += f"{analysis_result_to_repr(res)}\n"
             chisqs = []
             for group, fit_data in fit_dataset.items():
-                chisqs.append(r"reduced-$\chi^2$ = " + f"{fit_data.reduced_chisq: .4g} ({group})")
+                chisqs.append(
+                    r"reduced-$\chi^2$ = " + f"{fit_data.reduced_chisq: .4g} ({group})"
+                )
             report += "\n".join(chisqs)
             self.drawer.draw_fit_report(description=report)
 

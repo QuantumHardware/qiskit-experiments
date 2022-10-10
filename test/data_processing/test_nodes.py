@@ -114,11 +114,26 @@ class TestAveraging(BaseDataProcessorTest):
         iq_data = np.array(
             [
                 [
-                    [[-6.20601501e14, -1.33257051e15], [-1.70921324e15, -4.05881657e15]],
-                    [[-5.80546502e14, -1.33492509e15], [-1.65094637e15, -4.05926942e15]],
-                    [[-4.04649069e14, -1.33191056e15], [-1.29680377e15, -4.03604815e15]],
-                    [[-2.22203874e14, -1.30291309e15], [-8.57663429e14, -3.97784973e15]],
-                    [[-2.92074029e13, -1.28578530e15], [-9.78824053e13, -3.92071056e15]],
+                    [
+                        [-6.20601501e14, -1.33257051e15],
+                        [-1.70921324e15, -4.05881657e15],
+                    ],
+                    [
+                        [-5.80546502e14, -1.33492509e15],
+                        [-1.65094637e15, -4.05926942e15],
+                    ],
+                    [
+                        [-4.04649069e14, -1.33191056e15],
+                        [-1.29680377e15, -4.03604815e15],
+                    ],
+                    [
+                        [-2.22203874e14, -1.30291309e15],
+                        [-8.57663429e14, -3.97784973e15],
+                    ],
+                    [
+                        [-2.92074029e13, -1.28578530e15],
+                        [-9.78824053e13, -3.92071056e15],
+                    ],
                     [[1.98056981e14, -1.26883024e15], [3.77157017e14, -3.87460328e15]],
                     [[4.29955888e14, -1.25022995e15], [1.02340118e15, -3.79508679e15]],
                     [[6.38981344e14, -1.25084614e15], [1.68918514e15, -3.78961044e15]],
@@ -135,7 +150,9 @@ class TestAveraging(BaseDataProcessorTest):
         avg_iq = AverageData(axis=0)
         processed_data = avg_iq(data=np.asarray(self.iq_experiment.data(0)["memory"]))
 
-        expected_avg = np.array([[8.82943876e13, -1.27850527e15], [1.43410186e14, -3.89952402e15]])
+        expected_avg = np.array(
+            [[8.82943876e13, -1.27850527e15], [1.43410186e14, -3.89952402e15]]
+        )
         expected_std = np.array(
             [[5.07650185e14, 4.44664719e13], [1.40522641e15, 1.22326831e14]]
         ) / np.sqrt(10)
@@ -239,12 +256,18 @@ class TestSVD(BaseDataProcessorTest):
         A simple setting where the IQ data of qubit 0 is oriented along (1,1) and
         the IQ data of qubit 1 is oriented along (1,-1).
         """
-        iq_data = [[[0.0, 0.0], [0.0, 0.0]], [[1.0, 1.0], [-1.0, 1.0]], [[-1.0, -1.0], [1.0, -1.0]]]
+        iq_data = [
+            [[0.0, 0.0], [0.0, 0.0]],
+            [[1.0, 1.0], [-1.0, 1.0]],
+            [[-1.0, -1.0], [1.0, -1.0]],
+        ]
 
         self.create_experiment_data(iq_data)
 
         iq_svd = SVD()
-        iq_svd.train(np.asarray([datum["memory"] for datum in self.iq_experiment.data()]))
+        iq_svd.train(
+            np.asarray([datum["memory"] for datum in self.iq_experiment.data()])
+        )
 
         # qubit 0 IQ data is oriented along (1,1)
         np.testing.assert_array_almost_equal(
@@ -298,7 +321,9 @@ class TestSVD(BaseDataProcessorTest):
         self.create_experiment_data(iq_data)
 
         iq_svd = SVD()
-        iq_svd.train(np.asarray([datum["memory"] for datum in self.iq_experiment.data()]))
+        iq_svd.train(
+            np.asarray([datum["memory"] for datum in self.iq_experiment.data()])
+        )
 
         np.testing.assert_array_almost_equal(
             iq_svd.parameters.main_axes[0], np.array([0.99633018, 0.08559302])
@@ -341,13 +366,17 @@ class TestSVD(BaseDataProcessorTest):
         self.create_experiment_data(iq_data, single_shot=True)
 
         iq_svd = SVD()
-        iq_svd.train(np.asarray([datum["memory"] for datum in self.iq_experiment.data()]))
+        iq_svd.train(
+            np.asarray([datum["memory"] for datum in self.iq_experiment.data()])
+        )
 
         processed_data = iq_svd(np.array(iq_data))
 
         # Test the output of the axis
         self.assertEqual(len(iq_svd.parameters.main_axes), 1)
-        self.assertTrue(np.allclose(iq_svd.parameters.main_axes[0], [0.92727304, 0.37438577]))
+        self.assertTrue(
+            np.allclose(iq_svd.parameters.main_axes[0], [0.92727304, 0.37438577])
+        )
 
         # Test the output data
         self.assertEqual(processed_data.shape, (3, 5, 1))
@@ -374,19 +403,33 @@ class TestSVD(BaseDataProcessorTest):
         )
 
         # Since the axis is along the real part the imaginary error is irrelevant.
-        processed_data = iq_svd(unp.uarray(nominal_values=[[[1.0, 0.2]]], std_devs=[[[0.2, 0.1]]]))
-        np.testing.assert_array_almost_equal(unp.nominal_values(processed_data), np.array([[1.0]]))
-        np.testing.assert_array_almost_equal(unp.std_devs(processed_data), np.array([[0.2]]))
+        processed_data = iq_svd(
+            unp.uarray(nominal_values=[[[1.0, 0.2]]], std_devs=[[[0.2, 0.1]]])
+        )
+        np.testing.assert_array_almost_equal(
+            unp.nominal_values(processed_data), np.array([[1.0]])
+        )
+        np.testing.assert_array_almost_equal(
+            unp.std_devs(processed_data), np.array([[0.2]])
+        )
 
         # Since the axis is along the real part the imaginary error is irrelevant.
-        processed_data = iq_svd(unp.uarray(nominal_values=[[[1.0, 0.2]]], std_devs=[[[0.2, 0.3]]]))
-        np.testing.assert_array_almost_equal(unp.nominal_values(processed_data), np.array([[1.0]]))
-        np.testing.assert_array_almost_equal(unp.std_devs(processed_data), np.array([[0.2]]))
+        processed_data = iq_svd(
+            unp.uarray(nominal_values=[[[1.0, 0.2]]], std_devs=[[[0.2, 0.3]]])
+        )
+        np.testing.assert_array_almost_equal(
+            unp.nominal_values(processed_data), np.array([[1.0]])
+        )
+        np.testing.assert_array_almost_equal(
+            unp.std_devs(processed_data), np.array([[0.2]])
+        )
 
         # Tilt the axis to an angle of 36.9... degrees
         iq_svd.set_parameters(main_axes=np.array([[0.8, 0.6]]))
 
-        processed_data = iq_svd(unp.uarray(nominal_values=[[[1.0, 0.0]]], std_devs=[[[0.2, 0.3]]]))
+        processed_data = iq_svd(
+            unp.uarray(nominal_values=[[[1.0, 0.0]]], std_devs=[[[0.2, 0.3]]])
+        )
         cos_ = np.cos(np.arctan(0.6 / 0.8))
         sin_ = np.sin(np.arctan(0.6 / 0.8))
         np.testing.assert_array_almost_equal(
@@ -411,7 +454,9 @@ class TestSVD(BaseDataProcessorTest):
         )
         self.assertRoundTripSerializable(node, check_func=self.json_equiv)
 
-        loaded_node = json.loads(json.dumps(node, cls=ExperimentEncoder), cls=ExperimentDecoder)
+        loaded_node = json.loads(
+            json.dumps(node, cls=ExperimentEncoder), cls=ExperimentDecoder
+        )
         self.assertTrue(loaded_node.is_trained)
 
 
@@ -467,7 +512,11 @@ class TestDiscriminator(BaseDataProcessorTest):
     def test_averaged_data(self):
         """Test that an error is raised when we try to discriminate averaged data."""
         # IQ data with dimension 3, 2, 2, i.e. 3 circuits, 2 qubits, and IQ point.
-        iq_data = [[[0.2, 0.0], [0.0, 0.0]], [[1.0, 1.0], [1.0, 1.0]], [[-1.0, -1.0], [1.0, -1.0]]]
+        iq_data = [
+            [[0.2, 0.0], [0.0, 0.0]],
+            [[1.0, 1.0], [1.0, 1.0]],
+            [[-1.0, -1.0], [1.0, -1.0]],
+        ]
 
         self.create_experiment_data(iq_data)
 
@@ -588,9 +637,21 @@ class TestDiscriminator(BaseDataProcessorTest):
         """Test a qutrit discriminator."""
 
         iq_data = [
-            [[[0.8, -1.0]], [[0.2, -1.0]], [[-0.8, -1.0]]],  # Circuit no. 1, 3 shots, 1 qutrit
-            [[[-0.3, -1.0]], [[0.8, -1.0]], [[-0.7, -1.0]]],  # Circuit no. 2, 3 shots, 3 qubits
-            [[[-0.8, -1.0]], [[0.2, -1.0]], [[0.8, 1.0]]],  # Circuit no. 3, 3 shots, 3 qubits
+            [
+                [[0.8, -1.0]],
+                [[0.2, -1.0]],
+                [[-0.8, -1.0]],
+            ],  # Circuit no. 1, 3 shots, 1 qutrit
+            [
+                [[-0.3, -1.0]],
+                [[0.8, -1.0]],
+                [[-0.7, -1.0]],
+            ],  # Circuit no. 2, 3 shots, 3 qubits
+            [
+                [[-0.8, -1.0]],
+                [[0.2, -1.0]],
+                [[0.8, 1.0]],
+            ],  # Circuit no. 3, 3 shots, 3 qubits
         ]
 
         expected = [["2", "2", "0"], ["0", "2", "0"], ["0", "2", "1"]]
@@ -690,7 +751,9 @@ class TestRestless(QiskitExperimentsTestCase):
         previous_shot = "1"
         shot = "1"
 
-        restless_classified_shot = RestlessToCounts._restless_classify(shot, previous_shot)
+        restless_classified_shot = RestlessToCounts._restless_classify(
+            shot, previous_shot
+        )
         self.assertEqual(restless_classified_shot, "0")
 
     def test_restless_classify_2(self):
@@ -701,7 +764,9 @@ class TestRestless(QiskitExperimentsTestCase):
         previous_shot = "11000110"
         shot = "11100010"
 
-        restless_classified_shot = RestlessToCounts._restless_classify(shot, previous_shot)
+        restless_classified_shot = RestlessToCounts._restless_classify(
+            shot, previous_shot
+        )
         self.assertEqual(restless_classified_shot, "00100100")
 
     def test_restless_process_1(self):
@@ -754,14 +819,20 @@ class TestRestless(QiskitExperimentsTestCase):
 
         # The shape of the IQ data is (2, 2, 2, 2) corresponding to
         # 2 circuits, 2 shots, 2 qubits and the respective IQ-point [I, Q].
-        data = [[[[1, -2], [2, 5]], [[1, 3], [4, 2]]], [[[6, -4], [-8, 2]], [[-3, 1], [0, 3]]]]
+        data = [
+            [[[1, -2], [2, 5]], [[1, 3], [4, 2]]],
+            [[[6, -4], [-8, 2]], [[-3, 1], [0, 3]]],
+        ]
         # time-ordered data: [[[1, -2], [2, 5]], [[6, -4], [-8, 2]], [[1, 3], [4, 2]], [[-3, 1], [0, 3]]]
         # subtraction: [[[1, -2], [2, 5]], [[5, -2], [-10, -3]], [[-5, 7], [12, 0]], [[-4, -2], [-4, 1]]]
         # absolute value: [[[1, -2], [2, 5]], [[5, 2], [10, 3]], [[5, 7], [12, 0]], [[4, 2], [4, 1]]]
         # sorted by circuit: [[[[1, -2], [2, 5]], [[5, 7], [12, 0]]],
         # [[[5, 2], [10, 3]], [[4, 2], [12, 0]]]]
         expected_data = np.array(
-            [[[[1, -2], [2, 5]], [[5, 7], [12, 0]]], [[[5, 2], [10, 3]], [[4, 2], [12, 0]]]]
+            [
+                [[[1, -2], [2, 5]], [[5, 7], [12, 0]]],
+                [[[5, 2], [10, 3]], [[4, 2], [12, 0]]],
+            ]
         )
         processed_data = node(data=np.array(data))
         self.assertTrue(processed_data.all() == expected_data.all())

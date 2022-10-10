@@ -96,7 +96,9 @@ class T2HahnBackend(BackendV1):
             initialization_error_arr = [initialization_error for _ in range(nqubits)]
         elif isinstance(initialization_error, list):
             if len(initialization_error) == 1:
-                initialization_error_arr = [initialization_error[0] for _ in range(nqubits)]
+                initialization_error_arr = [
+                    initialization_error[0] for _ in range(nqubits)
+                ]
             elif len(initialization_error) == nqubits:
                 initialization_error_arr = initialization_error
             else:
@@ -117,7 +119,11 @@ class T2HahnBackend(BackendV1):
             if initialization_error_arr[qubit] is not None and (
                 self._rng.random() < initialization_error_arr[qubit]
             ):
-                qubits_sates[qubit] = {"XY plane": False, "ZX plane": True, "Theta": np.pi}
+                qubits_sates[qubit] = {
+                    "XY plane": False,
+                    "ZX plane": True,
+                    "Theta": np.pi,
+                }
             else:
                 qubits_sates[qubit] = {
                     "XY plane": False,
@@ -126,7 +132,9 @@ class T2HahnBackend(BackendV1):
                 }
         return qubits_sates
 
-    def _delay_gate(self, qubit_state: dict, delay: float, t2hahn: float, frequency: float) -> dict:
+    def _delay_gate(
+        self, qubit_state: dict, delay: float, t2hahn: float, frequency: float
+    ) -> dict:
         """
         Apply delay gate to the qubit. From the delay time we can calculate the probability
         that an error has accrued.
@@ -144,7 +152,9 @@ class T2HahnBackend(BackendV1):
             QiskitError: Raised if the frequency is 'None' or if the qubit isn't in the XY plane.
         """
         if frequency is None:
-            raise QiskitError("Delay gate supported only if the qubit is on the XY plane.")
+            raise QiskitError(
+                "Delay gate supported only if the qubit is on the XY plane."
+            )
         new_qubit_state = qubit_state
         if qubit_state["XY plane"]:
             prob_noise = 1 - (np.exp(-delay / t2hahn))
@@ -165,10 +175,18 @@ class T2HahnBackend(BackendV1):
                 phase = frequency * delay
                 new_theta = qubit_state["Theta"] + phase
                 new_theta = new_theta % (2 * np.pi)
-                new_qubit_state = {"XY plane": True, "ZX plane": False, "Theta": new_theta}
+                new_qubit_state = {
+                    "XY plane": True,
+                    "ZX plane": False,
+                    "Theta": new_theta,
+                }
         else:
-            if not isclose(qubit_state["Theta"], np.pi) and not isclose(qubit_state["Theta"], 0):
-                raise QiskitError("Delay gate supported only if the qubit is on the XY plane.")
+            if not isclose(qubit_state["Theta"], np.pi) and not isclose(
+                qubit_state["Theta"], 0
+            ):
+                raise QiskitError(
+                    "Delay gate supported only if the qubit is on the XY plane."
+                )
         return new_qubit_state
 
     def _rx_gate(self, qubit_state: dict, angle: float) -> dict:
@@ -324,7 +342,9 @@ class T2HahnBackend(BackendV1):
                             frequency=freq,
                         )
                     elif op.name == "rx":
-                        qubit_state[qubit] = self._rx_gate(qubit_state[qubit], op.params[0])
+                        qubit_state[qubit] = self._rx_gate(
+                            qubit_state[qubit], op.params[0]
+                        )
                     elif op.name == "measure":
                         meas_res = self._measurement_gate(qubit_state[qubit])
                         clbit = clbit_indices[cargs[0]]

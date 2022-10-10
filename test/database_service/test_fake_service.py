@@ -108,7 +108,9 @@ class TestFakeService(QiskitExperimentsTestCase):
                     # with columns that are set internally by the service.
 
                     # The service sets the backend to be the experiment's backend
-                    resentry["backend_name"] = self.expdict[str(experiment_id)]["backend_name"]
+                    resentry["backend_name"] = self.expdict[str(experiment_id)][
+                        "backend_name"
+                    ]
 
                     # The service determines the time (see documentation in
                     # FakeService.create_analysis_result).
@@ -142,7 +144,8 @@ class TestFakeService(QiskitExperimentsTestCase):
     def test_query_for_single(self):
         """Test FakeService methods experiment and analysis_result"""
         for query_method, reference_dict, in zip(
-            [self.service.experiment, self.service.analysis_result], [self.expdict, self.resdict]
+            [self.service.experiment, self.service.analysis_result],
+            [self.expdict, self.resdict],
         ):
             for id_value in range(len(reference_dict)):
                 full_entry = query_method(str(id_value))
@@ -174,7 +177,9 @@ class TestFakeService(QiskitExperimentsTestCase):
             expids = sorted(
                 [
                     exp["experiment_id"]
-                    for exp in self.service.experiments(backend_name=str(backend_name), limit=None)
+                    for exp in self.service.experiments(
+                        backend_name=str(backend_name), limit=None
+                    )
                 ]
             )
             ref_expids = sorted(
@@ -191,7 +196,9 @@ class TestFakeService(QiskitExperimentsTestCase):
             expids = sorted(
                 [
                     exp["experiment_id"]
-                    for exp in self.service.experiments(parent_id=str(parent_id), limit=None)
+                    for exp in self.service.experiments(
+                        parent_id=str(parent_id), limit=None
+                    )
                 ]
             )
             ref_expids = sorted(
@@ -239,7 +246,11 @@ class TestFakeService(QiskitExperimentsTestCase):
             ]
         )
         ref_expids = sorted(
-            [exp["experiment_id"] for exp in self.expdict.values() if "a0" in exp["tags"]]
+            [
+                exp["experiment_id"]
+                for exp in self.expdict.values()
+                if "a0" in exp["tags"]
+            ]
         )
         self.assertTrue(len(expids) > 0)
         self.assertEqual(expids, ref_expids)
@@ -256,14 +267,18 @@ class TestFakeService(QiskitExperimentsTestCase):
         )
         self.assertEqual(expids, ["3", "4", "5", "6"])
 
-        datetimes = [exp["start_datetime"] for exp in self.service.experiments(limit=None)]
+        datetimes = [
+            exp["start_datetime"] for exp in self.service.experiments(limit=None)
+        ]
         self.assertTrue(len(datetimes) > 0)
         for i in range(len(datetimes) - 1):
             self.assertTrue(datetimes[i] >= datetimes[i + 1])
 
         datetimes = [
             exp["start_datetime"]
-            for exp in self.service.experiments(sort_by="start_datetime:asc", limit=None)
+            for exp in self.service.experiments(
+                sort_by="start_datetime:asc", limit=None
+            )
         ]
         self.assertTrue(len(datetimes) > 0)
         for i in range(len(datetimes) - 1):
@@ -342,11 +357,17 @@ class TestFakeService(QiskitExperimentsTestCase):
             resids = sorted(
                 [
                     res["result_id"]
-                    for res in self.service.analysis_results(quality=quality, limit=None)
+                    for res in self.service.analysis_results(
+                        quality=quality, limit=None
+                    )
                 ]
             )
             ref_resids = sorted(
-                [res["result_id"] for res in self.resdict.values() if res["quality"] == quality]
+                [
+                    res["result_id"]
+                    for res in self.resdict.values()
+                    if res["quality"] == quality
+                ]
             )
             self.assertTrue(len(resids) > 0)
             self.assertEqual(resids, ref_resids)
@@ -355,11 +376,17 @@ class TestFakeService(QiskitExperimentsTestCase):
             resids = sorted(
                 [
                     res["result_id"]
-                    for res in self.service.analysis_results(verified=verified, limit=None)
+                    for res in self.service.analysis_results(
+                        verified=verified, limit=None
+                    )
                 ]
             )
             ref_resids = sorted(
-                [res["result_id"] for res in self.resdict.values() if res["verified"] == verified]
+                [
+                    res["result_id"]
+                    for res in self.resdict.values()
+                    if res["verified"] == verified
+                ]
             )
             self.assertTrue(len(resids) > 0)
             self.assertEqual(resids, ref_resids)
@@ -423,14 +450,19 @@ class TestFakeService(QiskitExperimentsTestCase):
         self.assertTrue(len(resids) > 0)
         self.assertEqual(resids, ref_resids)
 
-        datetimes = [res["creation_datetime"] for res in self.service.analysis_results(limit=None)]
+        datetimes = [
+            res["creation_datetime"]
+            for res in self.service.analysis_results(limit=None)
+        ]
         self.assertTrue(len(datetimes) > 0)
         for i in range(len(datetimes) - 1):
             self.assertTrue(datetimes[i] >= datetimes[i + 1])
 
         datetimes = [
             res["creation_datetime"]
-            for res in self.service.analysis_results(sort_by="creation_datetime:asc", limit=None)
+            for res in self.service.analysis_results(
+                sort_by="creation_datetime:asc", limit=None
+            )
         ]
         self.assertTrue(len(datetimes) > 0)
         for i in range(len(datetimes) - 1):

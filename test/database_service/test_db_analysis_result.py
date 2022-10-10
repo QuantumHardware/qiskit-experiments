@@ -24,7 +24,11 @@ import uncertainties
 
 from qiskit_ibm_experiment import IBMExperimentService, ExperimentData
 from qiskit_experiments.framework import AnalysisResult
-from qiskit_experiments.database_service.device_component import Qubit, Resonator, to_component
+from qiskit_experiments.database_service.device_component import (
+    Qubit,
+    Resonator,
+    to_component,
+)
 from qiskit_experiments.database_service.exceptions import ExperimentDataError
 
 
@@ -130,7 +134,9 @@ class TestAnalysisResult(QiskitExperimentsTestCase):
 
     def test_data_serialization(self):
         """Test result data serialization."""
-        result = self._new_analysis_result(value={"complex": 2 + 3j, "numpy": np.zeros(2)})
+        result = self._new_analysis_result(
+            value={"complex": 2 + 3j, "numpy": np.zeros(2)}
+        )
         serialized = json.dumps(result.value, cls=result._json_encoder)
         self.assertIsInstance(serialized, str)
         self.assertTrue(json.loads(serialized))
@@ -150,19 +156,27 @@ class TestAnalysisResult(QiskitExperimentsTestCase):
         self.assertEqual(AnalysisResult._display_format(-math.inf), "-Infinity")
         self.assertEqual(AnalysisResult._display_format(math.nan), "NaN")
         self.assertEqual(
-            AnalysisResult._display_format(uncertainties.ufloat(math.nan, math.nan).nominal_value),
+            AnalysisResult._display_format(
+                uncertainties.ufloat(math.nan, math.nan).nominal_value
+            ),
             "NaN",
         )
         self.assertEqual(
-            AnalysisResult._display_format(uncertainties.ufloat(math.nan, math.nan).std_dev),
+            AnalysisResult._display_format(
+                uncertainties.ufloat(math.nan, math.nan).std_dev
+            ),
             "NaN",
         )
         self.assertEqual(
-            AnalysisResult._display_format(uncertainties.ufloat(math.inf, -math.inf).nominal_value),
+            AnalysisResult._display_format(
+                uncertainties.ufloat(math.inf, -math.inf).nominal_value
+            ),
             "Infinity",
         )
         self.assertEqual(
-            AnalysisResult._display_format(uncertainties.ufloat(math.inf, -math.inf).std_dev),
+            AnalysisResult._display_format(
+                uncertainties.ufloat(math.inf, -math.inf).std_dev
+            ),
             "-Infinity",
         )
 

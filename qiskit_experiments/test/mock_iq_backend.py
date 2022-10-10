@@ -88,12 +88,16 @@ class MockRestlessBackend(FakeOpenPulse2Q):
         self._compute_outcome_probabilities(run_input)
 
         if run_input[0].num_qubits != 2:
-            raise DataProcessorError(f"{self.__class__.__name__} is a two qubit mock device.")
+            raise DataProcessorError(
+                f"{self.__class__.__name__} is a two qubit mock device."
+            )
 
         prev_outcome, state_strings = "00", self._get_state_strings(2)
 
         # Setup the list of dicts where each dict corresponds to a circuit.
-        sorted_memory = [{"memory": [], "metadata": circ.metadata} for circ in run_input]
+        sorted_memory = [
+            {"memory": [], "metadata": circ.metadata} for circ in run_input
+        ]
 
         for _ in range(shots):
             for circ_idx, _ in enumerate(run_input):
@@ -107,7 +111,9 @@ class MockRestlessBackend(FakeOpenPulse2Q):
 
         for idx, circ in enumerate(run_input):
             counts = {}
-            for key1, key2 in zip(["00", "01", "10", "11"], ["0x0", "0x1", "0x2", "0x3"]):
+            for key1, key2 in zip(
+                ["00", "01", "10", "11"], ["0x0", "0x1", "0x2", "0x3"]
+            ):
                 counts[key1] = sorted_memory[idx]["memory"].count(key2)
             run_result = {
                 "shots": shots,
@@ -129,7 +135,11 @@ class MockRestlessFineAmp(MockRestlessBackend):
     """A mock backend for restless single-qubit fine amplitude experiments."""
 
     def __init__(
-        self, angle_error: float, angle_per_gate: float, gate_name: str, rng_seed: int = 0
+        self,
+        angle_error: float,
+        angle_per_gate: float,
+        gate_name: str,
+        rng_seed: int = 0,
     ):
         """Setup a mock backend to test the restless fine amplitude calibration.
 
@@ -339,7 +349,9 @@ class MockIQBackend(FakeOpenPulse2Q):
 
         # Scale samples to use iq_cluster_width.
         exp_widths = [iq_cluster_width[i_qubit] for i_qubit in circ_qubits]
-        qubits_iq_rand = self._scale_samples_for_widths(qubits_iq_template_rand, exp_widths)
+        qubits_iq_rand = self._scale_samples_for_widths(
+            qubits_iq_template_rand, exp_widths
+        )
 
         memory = []
         shot_num = 0
@@ -408,7 +420,9 @@ class MockIQBackend(FakeOpenPulse2Q):
         else:
             # Phase has meaning only for IQ shot, so we calculate it here
             phase = self.experiment_helper.iq_phase([circuit])[0]
-            iq_cluster_centers, iq_cluster_width = self.experiment_helper.iq_clusters([circuit])[0]
+            iq_cluster_centers, iq_cluster_width = self.experiment_helper.iq_clusters(
+                [circuit]
+            )[0]
 
             # 'circ_qubits' get a list of all the qubits
             memory = self._draw_iq_shots(
@@ -455,7 +469,9 @@ class MockIQBackend(FakeOpenPulse2Q):
         """
 
         if not self.experiment_helper:
-            raise QiskitError("The backend `experiment_helper` attribute cannot be 'None'.")
+            raise QiskitError(
+                "The backend `experiment_helper` attribute cannot be 'None'."
+            )
 
         self.options.update_options(**run_options)
         shots = self.options.get("shots")
@@ -578,7 +594,9 @@ class MockIQParallelBackend(MockIQBackend):
             exp_widths = [iq_widths[i_qubit] for i_qubit in circ_qubits]
 
             # Rescale samples to appropriate width for the given parallel circuits
-            qubits_iq_rand = self._scale_samples_for_widths(qubits_iq_template_rand, exp_widths)
+            qubits_iq_rand = self._scale_samples_for_widths(
+                qubits_iq_template_rand, exp_widths
+            )
 
             shot_num = 0
 
@@ -599,15 +617,19 @@ class MockIQParallelBackend(MockIQBackend):
                         # we use 'sample_idx_shift' to take the sample corresponding to the current qubit
                         # in 'qubits_iq_rand[shot_num]'.
                         point_i = (
-                            i_center + qubits_iq_rand[shot_num][qubit_idx + sample_idx_shift][0]
+                            i_center
+                            + qubits_iq_rand[shot_num][qubit_idx + sample_idx_shift][0]
                         )
                         point_q = (
-                            q_center + qubits_iq_rand[shot_num][qubit_idx + sample_idx_shift][1]
+                            q_center
+                            + qubits_iq_rand[shot_num][qubit_idx + sample_idx_shift][1]
                         )
 
                         # Adding phase if not 0.0
                         if not np.allclose(phase, 0.0):
-                            complex_iq = (point_i + 1.0j * point_q) * np.exp(1.0j * phase)
+                            complex_iq = (point_i + 1.0j * point_q) * np.exp(
+                                1.0j * phase
+                            )
                             point_i, point_q = np.real(complex_iq), np.imag(complex_iq)
 
                         memory[shot_num].append([point_i, point_q])
@@ -645,14 +667,18 @@ class MockIQParallelBackend(MockIQBackend):
         run_result = {}
 
         if meas_level == MeasLevel.KERNELED:
-            memory = self._parallel_draw_iq_shots(list_exp_dict, shots, circ_qubit_list, circ_idx)
+            memory = self._parallel_draw_iq_shots(
+                list_exp_dict, shots, circ_qubit_list, circ_idx
+            )
             if meas_return == "avg":
                 memory = np.average(np.array(memory), axis=0).tolist()
 
             run_result["memory"] = memory
         else:
             # The backend doesn't currently support 'meas_level = MeasLevel.CLASSIFIED'.
-            raise QiskitError("Classified data generator isn't supported for this backend")
+            raise QiskitError(
+                "Classified data generator isn't supported for this backend"
+            )
 
         return run_result
 
@@ -686,7 +712,9 @@ class MockIQParallelBackend(MockIQBackend):
         """
 
         if not self.experiment_helper:
-            raise QiskitError("The backend `experiment_helper` attribute cannot be 'None'.")
+            raise QiskitError(
+                "The backend `experiment_helper` attribute cannot be 'None'."
+            )
 
         self.options.update_options(**run_options)
         shots = self.options.get("shots")
@@ -710,7 +738,9 @@ class MockIQParallelBackend(MockIQBackend):
                 "meas_level": meas_level,
             }
 
-            run_result["data"] = self._parallel_generate_data(experiment_data_list, circ_idx)
+            run_result["data"] = self._parallel_generate_data(
+                experiment_data_list, circ_idx
+            )
             result["results"].append(run_result)
 
         return FakeJob(self, Result.from_dict(result))

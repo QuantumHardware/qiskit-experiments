@@ -122,7 +122,8 @@ def mean_xy_data(
     if method == "iwv":
         if sigma is None:
             raise QiskitError(
-                "The inverse-weighted variance method cannot be used with" " `sigma=None`"
+                "The inverse-weighted variance method cannot be used with"
+                " `sigma=None`"
             )
         for i in range(x_means.size):
             # Get positions of y to average
@@ -253,7 +254,9 @@ def data_sort(
     if shots is None:
         shots = np.full(series.size, np.nan, dtype=float)
 
-    sorted_data = sorted(zip(series, xdata, ydata, sigma, shots), key=lambda d: (d[0], d[1]))
+    sorted_data = sorted(
+        zip(series, xdata, ydata, sigma, shots), key=lambda d: (d[0], d[1])
+    )
 
     return np.asarray(sorted_data).T
 

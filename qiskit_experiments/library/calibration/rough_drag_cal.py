@@ -60,7 +60,10 @@ class RoughDragCal(BaseCalibrationExperiment, RoughDrag):
             group: The group of calibration parameters to use. The default value is "default".
         """
         schedule = calibrations.get_schedule(
-            schedule_name, qubit, assign_params={cal_parameter_name: Parameter("β")}, group=group
+            schedule_name,
+            qubit,
+            assign_params={cal_parameter_name: Parameter("β")},
+            group=group,
         )
 
         self._validate_channels(schedule, [qubit])
@@ -88,7 +91,10 @@ class RoughDragCal(BaseCalibrationExperiment, RoughDrag):
         """
         metadata = super()._metadata()
         metadata["cal_param_value"] = self._cals.get_parameter_value(
-            self._param_name, self.physical_qubits, self._sched_name, self.experiment_options.group
+            self._param_name,
+            self.physical_qubits,
+            self._sched_name,
+            self.experiment_options.group,
         )
         return metadata
 

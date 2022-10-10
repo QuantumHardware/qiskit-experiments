@@ -67,16 +67,28 @@ def validate_header(file_path):
         if count > 5:
             return file_path, False, "Header not found in first 5 lines"
         if count <= 2 and pep263.match(line):
-            return file_path, False, "Unnecessary encoding specification (PEP 263, 3120)"
+            return (
+                file_path,
+                False,
+                "Unnecessary encoding specification (PEP 263, 3120)",
+            )
         if line == "# This code is part of Qiskit.\n":
             start = index
             break
     if "".join(lines[start : start + 2]) != header:
-        return (file_path, False, "Header up to copyright line does not match: %s" % header)
+        return (
+            file_path,
+            False,
+            "Header up to copyright line does not match: %s" % header,
+        )
     if not lines[start + 2].startswith("# (C) Copyright IBM 20"):
         return (file_path, False, "Header copyright line not found")
     if "".join(lines[start + 3 : start + 11]) != apache_text:
-        return (file_path, False, "Header apache text string doesn't match:\n %s" % apache_text)
+        return (
+            file_path,
+            False,
+            "Header apache text string doesn't match:\n %s" % apache_text,
+        )
     return (file_path, True, None)
 
 
@@ -85,7 +97,10 @@ def main():
     Run the verifier
     """
     root_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-    default_paths = [os.path.join(root_dir, "qiskit_experiments"), os.path.join(root_dir, "test")]
+    default_paths = [
+        os.path.join(root_dir, "qiskit_experiments"),
+        os.path.join(root_dir, "test"),
+    ]
     parser = argparse.ArgumentParser(description="Check file headers.")
     parser.add_argument("paths", type=str, nargs="*", default=default_paths)
     args = parser.parse_args()

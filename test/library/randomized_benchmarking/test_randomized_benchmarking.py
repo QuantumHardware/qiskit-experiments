@@ -72,7 +72,9 @@ class RBTestCase(QiskitExperimentsTestCase):
             circ.remove_final_measurements()
 
             self.assertEqual(
-                Clifford(circ), iden, f"Circuit {circ.name} doesn't result in the identity matrix."
+                Clifford(circ),
+                iden,
+                f"Circuit {circ.name} doesn't result in the identity matrix.",
             )
 
 
@@ -297,7 +299,10 @@ class TestInterleavedRB(RBTestCase):
         barrier and interleaved element between any two Cliffords.
         """
         exp = rb.InterleavedRB(
-            interleaved_element=interleaved_element, qubits=qubits, lengths=[length], num_samples=1
+            interleaved_element=interleaved_element,
+            qubits=qubits,
+            lengths=[length],
+            num_samples=1,
         )
 
         circuits = exp.circuits()
@@ -396,7 +401,11 @@ class TestInterleavedRB(RBTestCase):
         delay_qc.x(1)
 
         exp = rb.InterleavedRB(
-            interleaved_element=delay_qc, qubits=[1, 2], lengths=[1], seed=123, num_samples=1
+            interleaved_element=delay_qc,
+            qubits=[1, 2],
+            lengths=[1],
+            seed=123,
+            num_samples=1,
         )
         _, int_circ = exp.circuits()
 
@@ -580,12 +589,16 @@ class TestEPGAnalysis(QiskitExperimentsTestCase):
         """Check that 2Q EPG with 1Q depolarization correction gives a better (smaller) result than
         without the correction."""
         analysis_1qrb_q0 = rb.RBAnalysis()
-        analysis_1qrb_q0.set_options(outcome="0", gate_error_ratio={"x": 2, "h": 1, "s": 0})
+        analysis_1qrb_q0.set_options(
+            outcome="0", gate_error_ratio={"x": 2, "h": 1, "s": 0}
+        )
         result_q0 = analysis_1qrb_q0.run(self.expdata_1qrb_q0, replace_results=False)
         self.assertExperimentDone(result_q0)
 
         analysis_1qrb_q1 = rb.RBAnalysis()
-        analysis_1qrb_q1.set_options(outcome="0", gate_error_ratio={"x": 2, "h": 1, "s": 0})
+        analysis_1qrb_q1.set_options(
+            outcome="0", gate_error_ratio={"x": 2, "h": 1, "s": 0}
+        )
         result_q1 = analysis_1qrb_q1.run(self.expdata_1qrb_q1, replace_results=False)
         self.assertExperimentDone(result_q1)
 
@@ -607,5 +620,6 @@ class TestEPGAnalysis(QiskitExperimentsTestCase):
         cx_epg_corrected = result_2qrb.analysis_results("EPG_cx")
 
         self.assertLess(
-            np.abs(cx_epg_corrected.value.n - 0.08 * 0.75), np.abs(cx_epg_raw.value.n - 0.08 * 0.75)
+            np.abs(cx_epg_corrected.value.n - 0.08 * 0.75),
+            np.abs(cx_epg_raw.value.n - 0.08 * 0.75),
         )

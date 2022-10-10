@@ -226,7 +226,9 @@ class CurveFitResult:
                     uind = self.var_names.index(name)
                     ufloat_params[name] = ufloat_fitvals[uind]
                 except ValueError:
-                    ufloat_params[name] = uncertainties.ufloat(self.params[name], std_dev=0.0)
+                    ufloat_params[name] = uncertainties.ufloat(
+                        self.params[name], std_dev=0.0
+                    )
 
         setattr(self, "_ufloat_params", ufloat_params)
         return ufloat_params
@@ -248,7 +250,9 @@ class CurveFitResult:
         setattr(self, "_correl", correl)
         return correl
 
-    @deprecated_function("0.5", "Use '.ufloat_params' which returns a dictionary instead.")
+    @deprecated_function(
+        "0.5", "Use '.ufloat_params' which returns a dictionary instead."
+    )
     def fitval(self, key: str) -> uncertainties.UFloat:
         """Deprecated. Return UFloat parameter specified by the key."""
         return self.ufloat_params[key]
@@ -328,7 +332,8 @@ class CurveFitResult:
 
 
 @deprecated_class(
-    "0.5", msg="Fit data is replaced with 'CurveFitResult' based on LMFIT minimizer result."
+    "0.5",
+    msg="Fit data is replaced with 'CurveFitResult' based on LMFIT minimizer result.",
 )
 @dataclasses.dataclass(frozen=True)
 class FitData:
@@ -502,7 +507,9 @@ class InitialGuesses(OptionsDict):
         try:
             return float(value)
         except (TypeError, ValueError) as ex:
-            raise AnalysisError(f"Input value {value} is not valid initial guess. ") from ex
+            raise AnalysisError(
+                f"Input value {value} is not valid initial guess. "
+            ) from ex
 
 
 class Boundaries(OptionsDict):
@@ -532,7 +539,9 @@ class Boundaries(OptionsDict):
                 )
             return float(minv), float(maxv)
         except (TypeError, ValueError) as ex:
-            raise AnalysisError(f"Input boundary {value} is not a min-max value tuple.") from ex
+            raise AnalysisError(
+                f"Input boundary {value} is not a min-max value tuple."
+            ) from ex
 
 
 # pylint: disable=invalid-name
@@ -602,5 +611,8 @@ class FitOptions:
     @property
     def options(self):
         """Generate keyword arguments of the curve fitter."""
-        bounds = {k: v if v is not None else (-np.inf, np.inf) for k, v in self.__bounds.items()}
+        bounds = {
+            k: v if v is not None else (-np.inf, np.inf)
+            for k, v in self.__bounds.items()
+        }
         return {"p0": dict(self.__p0), "bounds": bounds, **self.__extra}

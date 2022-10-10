@@ -135,5 +135,10 @@ class FineFrequencyCal(BaseCalibrationExperiment, FineFrequency):
         new_freq = prev_freq + d_theta / (2 * np.pi * tau * dt)
 
         BaseUpdater.add_parameter_value(
-            self._cals, experiment_data, new_freq, self._param_name, self._sched_name, group
+            self._cals,
+            experiment_data,
+            new_freq,
+            self._param_name,
+            self._sched_name,
+            group,
         )

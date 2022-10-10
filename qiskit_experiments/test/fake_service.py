@@ -205,14 +205,18 @@ class FakeService:
                 self.exps.loc[row, field_name] = kwargs[field_name]
 
     def experiment(
-        self, experiment_id: str, json_decoder: Type[json.JSONDecoder] = json.JSONDecoder
+        self,
+        experiment_id: str,
+        json_decoder: Type[json.JSONDecoder] = json.JSONDecoder,
     ) -> Dict:
         """Returns an experiment by experiment_id"""
         # pylint: disable = unused-argument
         if experiment_id not in self.exps.experiment_id.values:
             raise ExperimentEntryNotFound("Experiment does not exist")
 
-        return self.exps.loc[self.exps.experiment_id == experiment_id].to_dict("records")[0]
+        return self.exps.loc[self.exps.experiment_id == experiment_id].to_dict(
+            "records"
+        )[0]
 
     def experiments(
         self,
@@ -251,9 +255,13 @@ class FakeService:
 
         if tags is not None:
             if tags_operator == "OR":
-                df = df.loc[df.tags.apply(lambda dftags: any(x in dftags for x in tags))]
+                df = df.loc[
+                    df.tags.apply(lambda dftags: any(x in dftags for x in tags))
+                ]
             elif tags_operator == "AND":
-                df = df.loc[df.tags.apply(lambda dftags: all(x in dftags for x in tags))]
+                df = df.loc[
+                    df.tags.apply(lambda dftags: all(x in dftags for x in tags))
+                ]
             else:
                 raise ValueError("Unrecognized tags operator")
 
@@ -271,7 +279,9 @@ class FakeService:
 
         # TODO: support also experiment_type
         if len(sort_by) != 1:
-            raise ValueError("The fake service currently supports only sorting by start_datetime")
+            raise ValueError(
+                "The fake service currently supports only sorting by start_datetime"
+            )
 
         sortby_split = sort_by[0].split(":")
         # TODO: support also experiment_type
@@ -286,7 +296,8 @@ class FakeService:
             )
 
         df = df.sort_values(
-            ["start_datetime", "experiment_id"], ascending=[(sortby_split[1] == "asc"), True]
+            ["start_datetime", "experiment_id"],
+            ascending=[(sortby_split[1] == "asc"), True],
         )
 
         df = df.iloc[:limit]
@@ -343,7 +354,9 @@ class FakeService:
                             "quality": quality,
                             "verified": verified,
                             "tags": tags,
-                            "backend_name": self.exps.loc[self.exps.experiment_id == experiment_id]
+                            "backend_name": self.exps.loc[
+                                self.exps.experiment_id == experiment_id
+                            ]
                             .iloc[0]
                             .backend_name,
                             "chisq": kwargs.get("chisq", None),
@@ -366,9 +379,9 @@ class FakeService:
                     expcomps.append(dc)
 
         # update the experiment's device components
-        self.exps.loc[self.exps.experiment_id == experiment_id, "device_components"].apply(
-            add_new_components
-        )
+        self.exps.loc[
+            self.exps.experiment_id == experiment_id, "device_components"
+        ].apply(add_new_components)
 
         return result_id
 
@@ -383,7 +396,9 @@ class FakeService:
     ) -> None:
         """Updates an analysis result"""
         if result_id not in self.results.result_id.values:
-            raise ExperimentEntryNotFound("Attempt to update a non-existing analysis result")
+            raise ExperimentEntryNotFound(
+                "Attempt to update a non-existing analysis result"
+            )
 
         row = self.results.result_id == result_id
         if result_data is not None:
@@ -407,7 +422,9 @@ class FakeService:
 
         # The `experiment` method implements special handling of the backend, we skip it here.
         # It's a bit strange, so, if not required by `DbExperimentData` then we'd better skip.
-        return self.results.loc[self.results.result_id == result_id].to_dict("records")[0]
+        return self.results.loc[self.results.result_id == result_id].to_dict("records")[
+            0
+        ]
 
     def analysis_results(
         self,
@@ -444,9 +461,13 @@ class FakeService:
 
         if tags is not None:
             if tags_operator == "OR":
-                df = df.loc[df.tags.apply(lambda dftags: any(x in dftags for x in tags))]
+                df = df.loc[
+                    df.tags.apply(lambda dftags: any(x in dftags for x in tags))
+                ]
             elif tags_operator == "AND":
-                df = df.loc[df.tags.apply(lambda dftags: all(x in dftags for x in tags))]
+                df = df.loc[
+                    df.tags.apply(lambda dftags: all(x in dftags for x in tags))
+                ]
             else:
                 raise ValueError("Unrecognized tags operator")
 
@@ -475,7 +496,8 @@ class FakeService:
             )
 
         df = df.sort_values(
-            ["creation_datetime", "result_id"], ascending=[(sortby_split[1] == "asc"), True]
+            ["creation_datetime", "result_id"],
+            ascending=[(sortby_split[1] == "asc"), True],
         )
 
         df = df.iloc[:limit]

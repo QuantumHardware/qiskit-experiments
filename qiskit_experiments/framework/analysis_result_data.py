@@ -28,7 +28,9 @@ class AnalysisResultData:
     value: Any
     chisq: Optional[float] = None
     quality: Optional[str] = None
-    extra: Dict[str, Any] = dataclasses.field(default_factory=dict, hash=False, compare=False)
+    extra: Dict[str, Any] = dataclasses.field(
+        default_factory=dict, hash=False, compare=False
+    )
     device_components: List = dataclasses.field(default_factory=list)
 
     def __str__(self):
@@ -46,4 +48,7 @@ class AnalysisResultData:
 
     def __iter__(self):
         """Return iterator of data fields (attr, value)"""
-        return iter((field.name, getattr(self, field.name)) for field in dataclasses.fields(self))
+        return iter(
+            (field.name, getattr(self, field.name))
+            for field in dataclasses.fields(self)
+        )

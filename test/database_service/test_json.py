@@ -82,7 +82,9 @@ class TestJSON(QiskitExperimentsTestCase):
             """Soft comparison of two instructions."""
             return inst1.soft_compare(inst2)
 
-        self.assertRoundTripSerializable(CustomInstruction(0.123), check_func=compare_instructions)
+        self.assertRoundTripSerializable(
+            CustomInstruction(0.123), check_func=compare_instructions
+        )
 
     def test_roundtrip_quantum_circuit(self):
         """Test round-trip serialization of a circuits"""

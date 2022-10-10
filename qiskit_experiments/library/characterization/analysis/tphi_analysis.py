@@ -18,7 +18,9 @@ from typing import List, Tuple
 from qiskit_experiments.framework import ExperimentData, AnalysisResultData
 from qiskit_experiments.framework.composite.composite_analysis import CompositeAnalysis
 from qiskit_experiments.library.characterization.analysis.t1_analysis import T1Analysis
-from qiskit_experiments.library.characterization.analysis.t2ramsey_analysis import T2RamseyAnalysis
+from qiskit_experiments.library.characterization.analysis.t2ramsey_analysis import (
+    T2RamseyAnalysis,
+)
 from qiskit_experiments.exceptions import QiskitError
 
 

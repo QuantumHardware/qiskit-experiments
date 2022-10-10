@@ -22,7 +22,9 @@ from qiskit import QuantumCircuit
 from qiskit.providers.backend import Backend
 
 from qiskit_experiments.framework import BaseExperiment, Options
-from qiskit_experiments.library.characterization.analysis.t2ramsey_analysis import T2RamseyAnalysis
+from qiskit_experiments.library.characterization.analysis.t2ramsey_analysis import (
+    T2RamseyAnalysis,
+)
 
 
 class T2Ramsey(BaseExperiment):

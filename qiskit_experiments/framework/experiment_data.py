@@ -115,7 +115,9 @@ class FigureData:
     def copy(self, new_name: Optional[str] = None):
         """Creates a copy of the figure data"""
         name = new_name or self.name
-        return FigureData(figure=self.figure, name=name, metadata=copy.deepcopy(self.metadata))
+        return FigureData(
+            figure=self.figure, name=name, metadata=copy.deepcopy(self.metadata)
+        )
 
     def __json_encode__(self) -> Dict[str, Any]:
         """Return the json representation of the figure data"""
@@ -309,7 +311,9 @@ class ExperimentData:
     def tags(self, new_tags: List[str]) -> None:
         """Set tags for this experiment."""
         if not isinstance(new_tags, list):
-            raise ExperimentDataError(f"The `tags` field of {type(self).__name__} must be a list.")
+            raise ExperimentDataError(
+                f"The `tags` field of {type(self).__name__} must be a list."
+            )
         self._db_data.tags = np.unique(new_tags).tolist()
         if self.auto_save:
             self.save_metadata()
@@ -716,13 +720,16 @@ class ExperimentData:
             jid = job.job_id()
             if jid in self._jobs:
                 LOG.warning(
-                    "Skipping duplicate job, a job with this ID already exists [Job ID: %s]", jid
+                    "Skipping duplicate job, a job with this ID already exists [Job ID: %s]",
+                    jid,
                 )
             else:
                 self.job_ids.append(jid)
                 self._jobs[jid] = job
                 if jid in self._job_futures:
-                    LOG.warning("Job future has already been submitted [Job ID: %s]", jid)
+                    LOG.warning(
+                        "Job future has already been submitted [Job ID: %s]", jid
+                    )
                 else:
                     self._add_job_future(job)
                     if timeout is not None:
@@ -791,7 +798,8 @@ class ExperimentData:
                 return jid, False
             if status == JobStatus.ERROR:
                 LOG.error(
-                    "Job data not added for errorred job [Job ID: %s]" "\nError message: %s",
+                    "Job data not added for errorred job [Job ID: %s]"
+                    "\nError message: %s",
                     jid,
                     job.error_message(),
                 )
@@ -839,7 +847,12 @@ class ExperimentData:
 
             # Add run analysis future
             self._analysis_futures[cid] = self._analysis_executor.submit(
-                self._run_analysis_callback, cid, wait_future, cancel_future, callback, **kwargs
+                self._run_analysis_callback,
+                cid,
+                wait_future,
+                cancel_future,
+                callback,
+                **kwargs,
             )
 
     def _run_analysis_callback(
@@ -857,7 +870,9 @@ class ExperimentData:
         # Monitor jobs and cancellation event to see if callback should be run
         # or cancelled
         # Future which returns if either all jobs finish, or cancel event is set
-        waited = futures.wait([wait_future, cancel_future], return_when="FIRST_COMPLETED")
+        waited = futures.wait(
+            [wait_future, cancel_future], return_when="FIRST_COMPLETED"
+        )
         cancel = not all(fut.result() for fut in waited.done)
 
         # Ensure monitor event is set so monitor future can terminate
@@ -892,7 +907,9 @@ class ExperimentData:
             return callback_id, True
         except Exception as ex:  # pylint: disable=broad-except
             self._analysis_callbacks[callback_id].status = AnalysisStatus.ERROR
-            tb_text = "".join(traceback.format_exception(type(ex), ex, ex.__traceback__))
+            tb_text = "".join(
+                traceback.format_exception(type(ex), ex, ex.__traceback__)
+            )
             error_msg = (
                 f"Analysis callback failed [Experiment ID: {self.experiment_id}]"
                 f"[Analysis Callback ID: {callback_id}]:\n{tb_text}"
@@ -919,7 +936,9 @@ class ExperimentData:
                     # Format to Counts object rather than hex dict
                     data["counts"] = result.get_counts(i)
                 expr_result = result.results[i]
-                if hasattr(expr_result, "header") and hasattr(expr_result.header, "metadata"):
+                if hasattr(expr_result, "header") and hasattr(
+                    expr_result.header, "metadata"
+                ):
                     data["metadata"] = expr_result.header.metadata
                 data["shots"] = expr_result.shots
                 data["meas_level"] = expr_result.meas_level
@@ -936,7 +955,11 @@ class ExperimentData:
         for jid, job in self._jobs.items():
             if job is None:
                 try:
-                    LOG.debug("Retrieving job from backend %s [Job ID: %s]", self._backend, jid)
+                    LOG.debug(
+                        "Retrieving job from backend %s [Job ID: %s]",
+                        self._backend,
+                        jid,
+                    )
                     job = self._backend.retrieve_job(jid)
                     retrieved_jobs[jid] = job
                 except Exception:  # pylint: disable=broad-except
@@ -1040,7 +1063,9 @@ class ExperimentData:
                 fig_name = figure_names[idx]
 
             if not fig_name.endswith(".svg"):
-                LOG.info("File name %s does not have an SVG extension. A '.svg' is added.")
+                LOG.info(
+                    "File name %s does not have an SVG extension. A '.svg' is added."
+                )
                 fig_name += ".svg"
 
             existing_figure = fig_name in self._figures
@@ -1061,7 +1086,9 @@ class ExperimentData:
 
             else:
                 figure_metadata = {"qubits": self.metadata.get("physical_qubits")}
-                figure_data = FigureData(figure=figure, name=fig_name, metadata=figure_metadata)
+                figure_data = FigureData(
+                    figure=figure, name=fig_name, metadata=figure_metadata
+                )
 
             self._figures[fig_name] = figure_data
 
@@ -1105,7 +1132,9 @@ class ExperimentData:
 
         if self._service and self.auto_save:
             with service_exception_to_warning():
-                self.service.delete_figure(experiment_id=self.experiment_id, figure_name=figure_key)
+                self.service.delete_figure(
+                    experiment_id=self.experiment_id, figure_name=figure_key
+                )
             self._deleted_figures.remove(figure_key)
 
         return figure_key
@@ -1136,7 +1165,9 @@ class ExperimentData:
 
         figure_data = self._figures.get(figure_key, None)
         if figure_data is None and self.service:
-            figure = self.service.figure(experiment_id=self.experiment_id, figure_name=figure_key)
+            figure = self.service.figure(
+                experiment_id=self.experiment_id, figure_name=figure_key
+            )
             figure_data = FigureData(figure=figure, name=figure_key)
             self._figures[figure_key] = figure_data
 
@@ -1215,7 +1246,9 @@ class ExperimentData:
         # Get job results if missing experiment data.
         if self.service and (not self._analysis_results or refresh):
             retrieved_results = self.service.analysis_results(
-                experiment_id=self.experiment_id, limit=None, json_decoder=self._json_decoder
+                experiment_id=self.experiment_id,
+                limit=None,
+                json_decoder=self._json_decoder,
             )
             for result in retrieved_results:
                 result_id = result.result_id
@@ -1284,7 +1317,9 @@ class ExperimentData:
                 return self._analysis_results[index]
             # Check by name
             filtered = [
-                result for result in self._analysis_results.values() if result.name == index
+                result
+                for result in self._analysis_results.values()
+                if result.name == index
             ]
             if not filtered:
                 raise ExperimentEntryNotFound(_make_not_found_message(index))
@@ -1339,7 +1374,9 @@ class ExperimentData:
                 self._db_data.metadata = {}
 
             self.service.create_or_update_experiment(
-                self._db_data, json_encoder=self._json_encoder, create=not self._created_in_db
+                self._db_data,
+                json_encoder=self._json_encoder,
+                create=not self._created_in_db,
             )
             self._created_in_db = True
 
@@ -1353,7 +1390,9 @@ class ExperimentData:
             # Don't automatically fail the experiment just because its data cannot be saved.
             LOG.error("Unable to save the experiment data: %s", traceback.format_exc())
             if not suppress_errors:
-                raise QiskitError(f"Experiment data save failed\nError Message:\n{str(ex)}") from ex
+                raise QiskitError(
+                    f"Experiment data save failed\nError Message:\n{str(ex)}"
+                ) from ex
 
     def _metadata_too_large(self):
         """Determines whether the metadata should be stored in a separate file"""
@@ -1385,7 +1424,9 @@ class ExperimentData:
 
         self._save_experiment_metadata(suppress_errors=suppress_errors)
         if not self._created_in_db:
-            LOG.warning("Could not save experiment metadata to DB, aborting experiment save")
+            LOG.warning(
+                "Could not save experiment metadata to DB, aborting experiment save"
+            )
             return
 
         for result in self._analysis_results.values():
@@ -1412,7 +1453,9 @@ class ExperimentData:
 
         for name in self._deleted_figures.copy():
             with service_exception_to_warning():
-                self._service.delete_figure(experiment_id=self.experiment_id, figure_name=name)
+                self._service.delete_figure(
+                    experiment_id=self.experiment_id, figure_name=name
+                )
             self._deleted_figures.remove(name)
 
         if not self.service.local and self.verbose:
@@ -1507,7 +1550,9 @@ class ExperimentData:
                     not_running.append(cid)
 
             # Wait for completion of other futures cancelled via event.set
-            waited = futures.wait([self._analysis_futures[cid] for cid in not_running], timeout=1)
+            waited = futures.wait(
+                [self._analysis_futures[cid] for cid in not_running], timeout=1
+            )
             # Get futures that didn't raise exception
             for fut in waited.done:
                 if fut.done() and not fut.exception():
@@ -1552,7 +1597,9 @@ class ExperimentData:
             analysis_futs = self._analysis_futures.values()
 
         # Wait for futures
-        self._wait_for_futures(job_futs + analysis_futs, name="jobs and analysis", timeout=timeout)
+        self._wait_for_futures(
+            job_futs + analysis_futs, name="jobs and analysis", timeout=timeout
+        )
 
         # Clean up done job futures
         num_jobs = len(job_ids)
@@ -1573,7 +1620,10 @@ class ExperimentData:
         # Check if more futures got added while this function was running
         # and block recursively. This could happen if an analysis callback
         # spawns another callback or creates more jobs
-        if len(self._job_futures) > num_jobs or len(self._analysis_futures) > num_analysis:
+        if (
+            len(self._job_futures) > num_jobs
+            or len(self._analysis_futures) > num_analysis
+        ):
             time_taken = time.time() - start_time
             if timeout is not None:
                 timeout = max(0, timeout - time_taken)
@@ -1582,7 +1632,10 @@ class ExperimentData:
         return self
 
     def _wait_for_futures(
-        self, futs: List[futures.Future], name: str = "futures", timeout: Optional[float] = None
+        self,
+        futs: List[futures.Future],
+        name: str = "futures",
+        timeout: Optional[float] = None,
     ) -> bool:
         """Wait for jobs to finish running.
 
@@ -1613,7 +1666,9 @@ class ExperimentData:
         for fut in waited.done:
             ex = fut.exception()
             if ex:
-                excepts += "\n".join(traceback.format_exception(type(ex), ex, ex.__traceback__))
+                excepts += "\n".join(
+                    traceback.format_exception(type(ex), ex, ex.__traceback__)
+                )
                 value = False
             elif fut.cancelled():
                 LOG.debug(
@@ -1628,7 +1683,10 @@ class ExperimentData:
                 value = False
         if excepts:
             LOG.error(
-                "%s raised exceptions [Experiment ID: %s]:%s", name, self.experiment_id, excepts
+                "%s raised exceptions [Experiment ID: %s]:%s",
+                name,
+                self.experiment_id,
+                excepts,
             )
 
         return value
@@ -1791,7 +1849,9 @@ class ExperimentData:
                 ex = fut.exception()
                 errors.append(
                     f"[Job ID: {jid}]"
-                    "\n".join(traceback.format_exception(type(ex), ex, ex.__traceback__))
+                    "\n".join(
+                        traceback.format_exception(type(ex), ex, ex.__traceback__)
+                    )
                 )
         return "".join(errors)
 
@@ -1867,7 +1927,9 @@ class ExperimentData:
         return self.child_data(index)
 
     @classmethod
-    def load(cls, experiment_id: str, service: IBMExperimentService) -> "ExperimentData":
+    def load(
+        cls, experiment_id: str, service: IBMExperimentService
+    ) -> "ExperimentData":
         """Load a saved experiment data from a database service.
 
         Args:
@@ -1893,7 +1955,9 @@ class ExperimentData:
         expdata._created_in_db = True
 
         child_data_ids = expdata.metadata.pop("child_data_ids", [])
-        child_data = [ExperimentData.load(child_id, service) for child_id in child_data_ids]
+        child_data = [
+            ExperimentData.load(child_id, service) for child_id in child_data_ids
+        ]
         expdata._set_child_data(child_data)
 
         return expdata
@@ -1963,13 +2027,17 @@ class ExperimentData:
         self._wait_for_futures(self._analysis_futures.values(), name="analysis")
         with self._analysis_results.lock:
             new_instance._analysis_results = ThreadSafeOrderedDict()
-            new_instance.add_analysis_results([result.copy() for result in self.analysis_results()])
+            new_instance.add_analysis_results(
+                [result.copy() for result in self.analysis_results()]
+            )
         with self._figures.lock:
             new_instance._figures = ThreadSafeOrderedDict()
             new_instance.add_figures(self._figures.values())
 
         # Recursively copy child data
-        child_data = [data.copy(copy_results=copy_results) for data in self.child_data()]
+        child_data = [
+            data.copy(copy_results=copy_results) for data in self.child_data()
+        ]
         new_instance._set_child_data(child_data)
         return new_instance
 
@@ -2133,7 +2201,12 @@ class ExperimentData:
         state = self.__dict__.copy()
 
         # Remove non-pickleable attributes
-        for key in ["_job_futures", "_analysis_futures", "_analysis_executor", "_monitor_executor"]:
+        for key in [
+            "_job_futures",
+            "_analysis_futures",
+            "_analysis_executor",
+            "_monitor_executor",
+        ]:
             del state[key]
 
         # Convert figures to SVG

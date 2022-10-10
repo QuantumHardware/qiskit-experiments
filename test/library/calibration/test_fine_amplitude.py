@@ -27,7 +27,9 @@ from qiskit_experiments.library import (
     FineXAmplitudeCal,
     FineSXAmplitudeCal,
 )
-from qiskit_experiments.calibration_management.basis_gate_library import FixedFrequencyTransmon
+from qiskit_experiments.calibration_management.basis_gate_library import (
+    FixedFrequencyTransmon,
+)
 from qiskit_experiments.calibration_management import Calibrations
 from qiskit_experiments.test.mock_iq_backend import MockIQBackend
 from qiskit_experiments.test.mock_iq_helpers import MockIQFineAmpHelper as FineAmpHelper
@@ -115,10 +117,14 @@ class TestFineAmplitudeCircuits(QiskitExperimentsTestCase):
         super().setUp()
 
         with pulse.build(name="xp") as xp:
-            pulse.play(Drag(duration=160, amp=0.208519, sigma=40, beta=0.0), DriveChannel(0))
+            pulse.play(
+                Drag(duration=160, amp=0.208519, sigma=40, beta=0.0), DriveChannel(0)
+            )
 
         with pulse.build(name="x90p") as x90p:
-            pulse.play(Drag(duration=160, amp=0.208519, sigma=40, beta=0.0), DriveChannel(0))
+            pulse.play(
+                Drag(duration=160, amp=0.208519, sigma=40, beta=0.0), DriveChannel(0)
+            )
 
         self.x_plus = xp
         self.x_90_plus = x90p
@@ -250,7 +256,9 @@ class TestFineAmplitudeCal(QiskitExperimentsTestCase):
 
         amp_cal = FineXAmplitudeCal(0, self.cals, "x")
 
-        circs = transpile(amp_cal.circuits(), self.backend, inst_map=self.cals.default_inst_map)
+        circs = transpile(
+            amp_cal.circuits(), self.backend, inst_map=self.cals.default_inst_map
+        )
 
         with pulse.build(name="x") as expected_x:
             pulse.play(pulse.Drag(160, 0.5, 40, 0), pulse.DriveChannel(0))
@@ -267,7 +275,9 @@ class TestFineAmplitudeCal(QiskitExperimentsTestCase):
         d_theta = exp_data.analysis_results(1).value.n
         new_amp = init_amp * np.pi / (np.pi + d_theta)
 
-        circs = transpile(amp_cal.circuits(), self.backend, inst_map=self.cals.default_inst_map)
+        circs = transpile(
+            amp_cal.circuits(), self.backend, inst_map=self.cals.default_inst_map
+        )
 
         x_cal = circs[5].calibrations["x"][((0,), ())]
 
@@ -289,7 +299,9 @@ class TestFineAmplitudeCal(QiskitExperimentsTestCase):
 
         amp_cal = FineSXAmplitudeCal(0, self.cals, "sx")
 
-        circs = transpile(amp_cal.circuits(), self.backend, inst_map=self.cals.default_inst_map)
+        circs = transpile(
+            amp_cal.circuits(), self.backend, inst_map=self.cals.default_inst_map
+        )
 
         with pulse.build(name="sx") as expected_sx:
             pulse.play(pulse.Drag(160, 0.25, 40, 0), pulse.DriveChannel(0))
@@ -297,12 +309,16 @@ class TestFineAmplitudeCal(QiskitExperimentsTestCase):
         self.assertEqual(circs[5].calibrations["sx"][((0,), ())], expected_sx)
 
         # run the calibration experiment. This should update the amp parameter of x which we test.
-        exp_data = amp_cal.run(MockIQBackend(FineAmpHelper(-np.pi * 0.07, np.pi / 2, "sx")))
+        exp_data = amp_cal.run(
+            MockIQBackend(FineAmpHelper(-np.pi * 0.07, np.pi / 2, "sx"))
+        )
         self.assertExperimentDone(exp_data)
         d_theta = exp_data.analysis_results(1).value.n
         new_amp = init_amp * (np.pi / 2) / (np.pi / 2 + d_theta)
 
-        circs = transpile(amp_cal.circuits(), self.backend, inst_map=self.cals.default_inst_map)
+        circs = transpile(
+            amp_cal.circuits(), self.backend, inst_map=self.cals.default_inst_map
+        )
 
         sx_cal = circs[5].calibrations["sx"][((0,), ())]
 

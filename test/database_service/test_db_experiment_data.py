@@ -249,7 +249,8 @@ class TestDbExperimentData(QiskitExperimentsTestCase):
         self.assertEqual(data1[1], exp_data.data(1))
         self.assertEqual(data1[2:4], exp_data.data(slice(2, 4)))
         self.assertEqual(
-            results.get_counts(), [sdata["counts"] for sdata in exp_data.data(results.job_id)]
+            results.get_counts(),
+            [sdata["counts"] for sdata in exp_data.data(results.job_id)],
         )
 
     def test_add_figure(self):
@@ -268,7 +269,9 @@ class TestDbExperimentData(QiskitExperimentsTestCase):
 
         for name, figure, figure_name in sub_tests:
             with self.subTest(name=name):
-                exp_data = ExperimentData(backend=self.backend, experiment_type="qiskit_test")
+                exp_data = ExperimentData(
+                    backend=self.backend, experiment_type="qiskit_test"
+                )
                 fn = exp_data.add_figures(figure, figure_name)
                 self.assertEqual(hello_bytes, exp_data.figure(fn).figure)
 
@@ -304,7 +307,9 @@ class TestDbExperimentData(QiskitExperimentsTestCase):
 
         for name, figures, figure_names in sub_tests:
             with self.subTest(name=name):
-                exp_data = ExperimentData(backend=self.backend, experiment_type="qiskit_test")
+                exp_data = ExperimentData(
+                    backend=self.backend, experiment_type="qiskit_test"
+                )
                 added_names = exp_data.add_figures(figures, figure_names)
                 for idx, added_fn in enumerate(added_names):
                     self.assertEqual(hello_bytes[idx], exp_data.figure(added_fn).figure)
@@ -350,7 +355,9 @@ class TestDbExperimentData(QiskitExperimentsTestCase):
         self.assertEqual(figure_data.metadata["qubits"], qubits)
         self.assertEqual(figure_data.metadata["foo"], "bar")
         expected_name_prefix = "qiskit_test_Fig-0_Exp-"
-        self.assertEqual(figure_data.name[: len(expected_name_prefix)], expected_name_prefix)
+        self.assertEqual(
+            figure_data.name[: len(expected_name_prefix)], expected_name_prefix
+        )
 
         exp_data2 = ExperimentData(
             backend=self.backend,
@@ -386,11 +393,14 @@ class TestDbExperimentData(QiskitExperimentsTestCase):
         name_template = "figure_{}.svg"
         for idx in range(3):
             exp_data.add_figures(
-                str.encode(figure_template.format(idx)), figure_names=name_template.format(idx)
+                str.encode(figure_template.format(idx)),
+                figure_names=name_template.format(idx),
             )
         idx = randrange(3)
         expected_figure = str.encode(figure_template.format(idx))
-        self.assertEqual(expected_figure, exp_data.figure(name_template.format(idx)).figure)
+        self.assertEqual(
+            expected_figure, exp_data.figure(name_template.format(idx)).figure
+        )
         self.assertEqual(expected_figure, exp_data.figure(idx).figure)
 
         file_name = uuid.uuid4().hex
@@ -406,7 +416,10 @@ class TestDbExperimentData(QiskitExperimentsTestCase):
         for idx in range(3):
             exp_data.add_figures(str.encode("hello world"), id_template.format(idx))
 
-        sub_tests = [(1, id_template.format(1)), (id_template.format(2), id_template.format(2))]
+        sub_tests = [
+            (1, id_template.format(1)),
+            (id_template.format(2), id_template.format(2)),
+        ]
 
         for del_key, figure_name in sub_tests:
             with self.subTest(del_key=del_key):
@@ -466,11 +479,16 @@ class TestDbExperimentData(QiskitExperimentsTestCase):
             res.result_id = id_template.format(idx)
             exp_data.add_analysis_results(res)
 
-        subtests = [(0, id_template.format(0)), (id_template.format(2), id_template.format(2))]
+        subtests = [
+            (0, id_template.format(0)),
+            (id_template.format(2), id_template.format(2)),
+        ]
         for del_key, res_id in subtests:
             with self.subTest(del_key=del_key):
                 exp_data.delete_analysis_result(del_key)
-                self.assertRaises(ExperimentEntryNotFound, exp_data.analysis_results, res_id)
+                self.assertRaises(
+                    ExperimentEntryNotFound, exp_data.analysis_results, res_id
+                )
 
     def test_save_metadata(self):
         """Test saving experiment metadata."""
@@ -533,12 +551,20 @@ class TestDbExperimentData(QiskitExperimentsTestCase):
         subtests = [
             # update function, update parameters, service called
             (exp_data.add_analysis_results, (mock_result,), mock_result.save),
-            (exp_data.add_figures, (str.encode("hello world"),), service.create_or_update_figure),
+            (
+                exp_data.add_figures,
+                (str.encode("hello world"),),
+                service.create_or_update_figure,
+            ),
             (exp_data.delete_figure, (0,), service.delete_figure),
             (exp_data.delete_analysis_result, (0,), service.delete_analysis_result),
             (setattr, (exp_data, "tags", ["foo"]), service.create_or_update_experiment),
             (setattr, (exp_data, "notes", "foo"), service.create_or_update_experiment),
-            (setattr, (exp_data, "share_level", "hub"), service.create_or_update_experiment),
+            (
+                setattr,
+                (exp_data, "share_level", "hub"),
+                service.create_or_update_experiment,
+            ),
         ]
 
         for func, params, called in subtests:
@@ -557,7 +583,9 @@ class TestDbExperimentData(QiskitExperimentsTestCase):
         event = threading.Event()
         job2 = mock.create_autospec(Job, instance=True)
         job2.result = lambda *args, **kwargs: event.wait(timeout=15)
-        job2.status = lambda: JobStatus.CANCELLED if event.is_set() else JobStatus.RUNNING
+        job2.status = (
+            lambda: JobStatus.CANCELLED if event.is_set() else JobStatus.RUNNING
+        )
         self.addCleanup(event.set)
 
         exp_data = ExperimentData(experiment_type="qiskit_test")
@@ -679,7 +707,9 @@ class TestDbExperimentData(QiskitExperimentsTestCase):
         job.job_id.return_value = "1234"
         job.cancel = _job_cancel
         job.result = _job_result
-        job.status = lambda: JobStatus.CANCELLED if event.is_set() else JobStatus.RUNNING
+        job.status = (
+            lambda: JobStatus.CANCELLED if event.is_set() else JobStatus.RUNNING
+        )
         exp_data.add_jobs(job)
 
         with self.assertLogs("qiskit_experiments", "WARNING"):
@@ -733,7 +763,9 @@ class TestDbExperimentData(QiskitExperimentsTestCase):
             event.wait(timeout=3)
             return self._get_job_result(1)
 
-        def _analysis(expdata, name=None, timeout=0):  # pylint: disable = unused-argument
+        def _analysis(
+            expdata, name=None, timeout=0
+        ):  # pylint: disable = unused-argument
             event.wait(timeout=timeout)
             run_analysis.append(name)
 
@@ -819,7 +851,9 @@ class TestDbExperimentData(QiskitExperimentsTestCase):
         job.job_id.return_value = "1234"
         job.result = _job_result
         job.cancel = event.set
-        job.status = lambda: JobStatus.CANCELLED if event.is_set() else JobStatus.RUNNING
+        job.status = (
+            lambda: JobStatus.CANCELLED if event.is_set() else JobStatus.RUNNING
+        )
 
         exp_data = ExperimentData(experiment_type="qiskit_test")
         exp_data.add_jobs(job, timeout=0.5)
@@ -1027,7 +1061,8 @@ class TestDbExperimentData(QiskitExperimentsTestCase):
         self.assertEqual(1, len(exp_data.data()))
         self.assertEqual(2, len(copied.data()))
         self.assertIn(
-            exp_data.data(0)["counts"], [copied.data(0)["counts"], copied.data(1)["counts"]]
+            exp_data.data(0)["counts"],
+            [copied.data(0)["counts"], copied.data(1)["counts"]],
         )
 
     def _get_job_result(self, circ_count, has_metadata=False):

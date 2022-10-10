@@ -38,14 +38,18 @@ def compute_probabilities_output(prob_list_output: List[Dict]) -> Dict[str, floa
     for i in range(2):
         for j in range(2):
             output_str = str(i) + str(j)
-            output_dict[output_str] = prob_list_output[0][str(i)] * prob_list_output[1][str(j)]
+            output_dict[output_str] = (
+                prob_list_output[0][str(i)] * prob_list_output[1][str(j)]
+            )
     return output_dict
 
 
 class MockIQReadoutAngleParallelHelper(MockIQExperimentHelper):
     """functions needed for Ramsey XY experiment on mock IQ backend"""
 
-    def compute_probabilities(self, circuits: List[QuantumCircuit]) -> List[Dict[str, float]]:
+    def compute_probabilities(
+        self, circuits: List[QuantumCircuit]
+    ) -> List[Dict[str, float]]:
         """Return the probability of being in the excited state."""
         num_qubits = 2
         output_dict_list = []
@@ -63,7 +67,9 @@ class MockIQReadoutAngleParallelHelper(MockIQExperimentHelper):
 class MockIQBellStateHelper(MockIQExperimentHelper):
     """functions needed for Ramsey XY experiment on mock IQ backend"""
 
-    def compute_probabilities(self, circuits: List[QuantumCircuit]) -> List[Dict[str, float]]:
+    def compute_probabilities(
+        self, circuits: List[QuantumCircuit]
+    ) -> List[Dict[str, float]]:
         """Return the probability of being in the excited state."""
         output_dict_list = []
         for _ in circuits:
@@ -98,7 +104,9 @@ class MockIQReadoutAmplitudeHelper(MockIQExperimentHelper):
         self.alter_centers = alter_centers
         self.alter_widths = alter_widths
 
-    def compute_probabilities(self, circuits: List[QuantumCircuit]) -> List[Dict[str, float]]:
+    def compute_probabilities(
+        self, circuits: List[QuantumCircuit]
+    ) -> List[Dict[str, float]]:
         probabilities = []
         for circ in circuits:
             probabilities.append({circ.metadata["prep"]: 1.0})
@@ -151,7 +159,9 @@ class TestMockIQBackend(QiskitExperimentsTestCase):
         circ0.metadata = {"qubits": [0, 1], "xval": [0, 1]}
 
         # Here meas_return is 'avg' so it will average on the results for each qubit.
-        job = backend.run([circ0], shots=num_shot, meas_level=MeasLevel.KERNELED, meas_return="avg")
+        job = backend.run(
+            [circ0], shots=num_shot, meas_level=MeasLevel.KERNELED, meas_return="avg"
+        )
         res = job.result()
         self.assertEqual(len(res.results[0].data.memory), num_qubits)
 
@@ -244,7 +254,9 @@ class TestMockIQBackend(QiskitExperimentsTestCase):
             # Add qubit 0 center for prepared state 1
             expected_centers_per_xval.append(np.array(bare_centers[0][1]) * xval)
 
-        for i, (expected_centers, data) in enumerate(zip(expected_centers_per_xval, res.results)):
+        for i, (expected_centers, data) in enumerate(
+            zip(expected_centers_per_xval, res.results)
+        ):
             memory = np.array(data.data.memory)
             centers = np.squeeze(np.mean(memory, axis=0))
             # For I and Q values
@@ -327,7 +339,9 @@ class TestMockIQBackend(QiskitExperimentsTestCase):
             expected_widths_per_xval.append(bare_widths[0] * xval)
 
         # Check the width for each circuit run (in data)
-        for i, (expected_width, data) in enumerate(zip(expected_widths_per_xval, res.results)):
+        for i, (expected_width, data) in enumerate(
+            zip(expected_widths_per_xval, res.results)
+        ):
             # Get the actual width (I and Q)
             memory = np.array(data.data.memory)
             actual_widths = np.squeeze(np.std(memory, axis=0))

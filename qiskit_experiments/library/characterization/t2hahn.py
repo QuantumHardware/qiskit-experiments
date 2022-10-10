@@ -20,7 +20,9 @@ from qiskit import QuantumCircuit, QiskitError
 from qiskit.providers.backend import Backend
 
 from qiskit_experiments.framework import BaseExperiment, Options
-from qiskit_experiments.library.characterization.analysis.t2hahn_analysis import T2HahnAnalysis
+from qiskit_experiments.library.characterization.analysis.t2hahn_analysis import (
+    T2HahnAnalysis,
+)
 
 
 class T2Hahn(BaseExperiment):

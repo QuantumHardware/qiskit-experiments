@@ -89,7 +89,9 @@ class SkLDA(BaseDiscriminator):
         """Deserialize from an object."""
 
         if not HAS_SKLEARN:
-            raise DataProcessorError(f"SKlearn is needed to initialize an {cls.__name__}.")
+            raise DataProcessorError(
+                f"SKlearn is needed to initialize an {cls.__name__}."
+            )
 
         lda = LinearDiscriminantAnalysis()
         lda.set_params(**config["params"])

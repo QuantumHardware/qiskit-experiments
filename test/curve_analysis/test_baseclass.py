@@ -21,7 +21,11 @@ import numpy as np
 from lmfit.models import ExpressionModel
 from qiskit.qobj.utils import MeasLevel
 
-from qiskit_experiments.curve_analysis import CurveAnalysis, CompositeCurveAnalysis, fit_function
+from qiskit_experiments.curve_analysis import (
+    CurveAnalysis,
+    CompositeCurveAnalysis,
+    fit_function,
+)
 from qiskit_experiments.curve_analysis.curve_data import (
     SeriesDef,
     CurveFitResult,
@@ -30,7 +34,11 @@ from qiskit_experiments.curve_analysis.curve_data import (
 )
 from qiskit_experiments.data_processing import DataProcessor, Probability
 from qiskit_experiments.exceptions import AnalysisError
-from qiskit_experiments.framework import ExperimentData, AnalysisResultData, CompositeAnalysis
+from qiskit_experiments.framework import (
+    ExperimentData,
+    AnalysisResultData,
+    CompositeAnalysis,
+)
 
 
 class CurveAnalysisTestCase(QiskitExperimentsTestCase):
@@ -43,7 +51,10 @@ class CurveAnalysisTestCase(QiskitExperimentsTestCase):
         counts = rng.binomial(shots, y)
 
         circuit_results = [
-            {"counts": {"0": shots - count, "1": count}, "metadata": {"xval": xi, **metadata}}
+            {
+                "counts": {"0": shots - count, "1": count},
+                "metadata": {"xval": xi, **metadata},
+            }
             for xi, count in zip(x, counts)
         ]
         expdata = ExperimentData(experiment=FakeExperiment())
@@ -66,7 +77,10 @@ class CurveAnalysisTestCase(QiskitExperimentsTestCase):
                 "counts": {"00": cs[0], "01": cs[1], "10": cs[2], "11": cs[3]},
                 "metadata": {
                     "composite_index": [0, 1],
-                    "composite_metadata": [{"xval": xi, **metadata}, {"xval": xi, **metadata}],
+                    "composite_metadata": [
+                        {"xval": xi, **metadata},
+                        {"xval": xi, **metadata},
+                    ],
                     "composite_qubits": [[0], [1]],
                     "composite_clbits": [[0], [1]],
                 },
@@ -85,12 +99,16 @@ class TestCurveAnalysis(CurveAnalysisTestCase):
 
     def test_roundtrip_serialize(self):
         """A testcase for serializing analysis instance."""
-        analysis = CurveAnalysis(models=[ExpressionModel(expr="par0 * x + par1", name="test")])
+        analysis = CurveAnalysis(
+            models=[ExpressionModel(expr="par0 * x + par1", name="test")]
+        )
         self.assertRoundTripSerializable(analysis, check_func=self.json_equiv)
 
     def test_parameters(self):
         """A testcase for getting fit parameters with attribute."""
-        analysis = CurveAnalysis(models=[ExpressionModel(expr="par0 * x + par1", name="test")])
+        analysis = CurveAnalysis(
+            models=[ExpressionModel(expr="par0 * x + par1", name="test")]
+        )
         self.assertListEqual(analysis.parameters, ["par0", "par1"])
 
         analysis.set_options(fixed_parameters={"par0": 1.0})
@@ -154,7 +172,9 @@ class TestCurveAnalysis(CurveAnalysisTestCase):
 
     def test_create_result(self):
         """A testcase for creating analysis result data from fit data."""
-        analysis = CurveAnalysis(models=[ExpressionModel(expr="par0 * x + par1", name="s1")])
+        analysis = CurveAnalysis(
+            models=[ExpressionModel(expr="par0 * x + par1", name="s1")]
+        )
         analysis.set_options(
             result_parameters=["par0", ParameterRepr("par1", "Param1", "SomeUnit")]
         )
@@ -171,7 +191,9 @@ class TestCurveAnalysis(CurveAnalysisTestCase):
             reduced_chisq=1.5,
         )
 
-        result_data = analysis._create_analysis_results(fit_data, quality="good", test="hoge")
+        result_data = analysis._create_analysis_results(
+            fit_data, quality="good", test="hoge"
+        )
 
         # entry name
         self.assertEqual(result_data[0].name, "par0")
@@ -209,9 +231,13 @@ class TestCurveAnalysis(CurveAnalysisTestCase):
 
     def test_end_to_end_single_function(self):
         """Integration test for single function."""
-        analysis = CurveAnalysis(models=[ExpressionModel(expr="amp * exp(-x/tau)", name="test")])
+        analysis = CurveAnalysis(
+            models=[ExpressionModel(expr="amp * exp(-x/tau)", name="test")]
+        )
         analysis.set_options(
-            data_processor=DataProcessor(input_key="counts", data_actions=[Probability("1")]),
+            data_processor=DataProcessor(
+                input_key="counts", data_actions=[Probability("1")]
+            ),
             p0={"amp": 0.5, "tau": 0.3},
             result_parameters=["amp", "tau"],
             plot=False,
@@ -225,8 +251,12 @@ class TestCurveAnalysis(CurveAnalysisTestCase):
         test_data = self.single_sampler(x, y)
         result = analysis.run(test_data).block_for_results()
 
-        self.assertAlmostEqual(result.analysis_results("amp").value.nominal_value, 0.5, delta=0.1)
-        self.assertAlmostEqual(result.analysis_results("tau").value.nominal_value, 0.3, delta=0.1)
+        self.assertAlmostEqual(
+            result.analysis_results("amp").value.nominal_value, 0.5, delta=0.1
+        )
+        self.assertAlmostEqual(
+            result.analysis_results("tau").value.nominal_value, 0.3, delta=0.1
+        )
 
     def test_end_to_end_multi_objective(self):
         """Integration test for multi objective function."""
@@ -245,7 +275,9 @@ class TestCurveAnalysis(CurveAnalysisTestCase):
             ]
         )
         analysis.set_options(
-            data_processor=DataProcessor(input_key="counts", data_actions=[Probability("1")]),
+            data_processor=DataProcessor(
+                input_key="counts", data_actions=[Probability("1")]
+            ),
             p0={"amp": 0.5, "freq": 2.1, "phi": 0.3, "base": 0.1},
             result_parameters=["amp", "freq", "phi", "base"],
             plot=False,
@@ -269,16 +301,28 @@ class TestCurveAnalysis(CurveAnalysisTestCase):
 
         result = analysis.run(expdata).block_for_results()
 
-        self.assertAlmostEqual(result.analysis_results("amp").value.nominal_value, amp, delta=0.1)
-        self.assertAlmostEqual(result.analysis_results("freq").value.nominal_value, freq, delta=0.1)
-        self.assertAlmostEqual(result.analysis_results("phi").value.nominal_value, phi, delta=0.1)
-        self.assertAlmostEqual(result.analysis_results("base").value.nominal_value, base, delta=0.1)
+        self.assertAlmostEqual(
+            result.analysis_results("amp").value.nominal_value, amp, delta=0.1
+        )
+        self.assertAlmostEqual(
+            result.analysis_results("freq").value.nominal_value, freq, delta=0.1
+        )
+        self.assertAlmostEqual(
+            result.analysis_results("phi").value.nominal_value, phi, delta=0.1
+        )
+        self.assertAlmostEqual(
+            result.analysis_results("base").value.nominal_value, base, delta=0.1
+        )
 
     def test_end_to_end_single_function_with_fixed_parameter(self):
         """Integration test for fitting with fixed parameter."""
-        analysis = CurveAnalysis(models=[ExpressionModel(expr="amp * exp(-x/tau)", name="test")])
+        analysis = CurveAnalysis(
+            models=[ExpressionModel(expr="amp * exp(-x/tau)", name="test")]
+        )
         analysis.set_options(
-            data_processor=DataProcessor(input_key="counts", data_actions=[Probability("1")]),
+            data_processor=DataProcessor(
+                input_key="counts", data_actions=[Probability("1")]
+            ),
             p0={"tau": 0.3},
             result_parameters=["amp", "tau"],
             fixed_parameters={"amp": 0.5},
@@ -295,7 +339,9 @@ class TestCurveAnalysis(CurveAnalysisTestCase):
 
         self.assertEqual(result.analysis_results("amp").value.nominal_value, 0.5)
         self.assertEqual(result.analysis_results("amp").value.std_dev, 0.0)
-        self.assertAlmostEqual(result.analysis_results("tau").value.nominal_value, 0.3, delta=0.1)
+        self.assertAlmostEqual(
+            result.analysis_results("tau").value.nominal_value, 0.3, delta=0.1
+        )
 
     def test_end_to_end_compute_new_entry(self):
         """Integration test for computing new parameter with error propagation."""
@@ -304,10 +350,14 @@ class TestCurveAnalysis(CurveAnalysisTestCase):
             """Custom analysis class to override result generation."""
 
             def __init__(self):
-                super().__init__(models=[ExpressionModel(expr="amp * exp(-x/tau)", name="test")])
+                super().__init__(
+                    models=[ExpressionModel(expr="amp * exp(-x/tau)", name="test")]
+                )
 
             def _create_analysis_results(self, fit_data, quality, **metadata):
-                results = super()._create_analysis_results(fit_data, quality, **metadata)
+                results = super()._create_analysis_results(
+                    fit_data, quality, **metadata
+                )
                 u_amp = fit_data.ufloat_params["amp"]
                 u_tau = fit_data.ufloat_params["tau"]
                 results.append(
@@ -320,7 +370,9 @@ class TestCurveAnalysis(CurveAnalysisTestCase):
 
         analysis = CustomAnalysis()
         analysis.set_options(
-            data_processor=DataProcessor(input_key="counts", data_actions=[Probability("1")]),
+            data_processor=DataProcessor(
+                input_key="counts", data_actions=[Probability("1")]
+            ),
             p0={"amp": 0.5, "tau": 0.3},
             plot=False,
         )
@@ -372,7 +424,9 @@ class TestCurveAnalysis(CurveAnalysisTestCase):
 
         analysis = CustomAnalysis()
         analysis.set_options(
-            data_processor=DataProcessor(input_key="counts", data_actions=[Probability("1")]),
+            data_processor=DataProcessor(
+                input_key="counts", data_actions=[Probability("1")]
+            ),
             p0={"amp": 0.5, "tau": 0.3},
             result_parameters=["amp", "tau"],
             plot=False,
@@ -387,23 +441,35 @@ class TestCurveAnalysis(CurveAnalysisTestCase):
         test_data = self.single_sampler(x, y)
         result = analysis.run(test_data).block_for_results()
 
-        self.assertAlmostEqual(result.analysis_results("amp").value.nominal_value, 0.5, delta=0.1)
-        self.assertAlmostEqual(result.analysis_results("tau").value.nominal_value, 0.3, delta=0.1)
+        self.assertAlmostEqual(
+            result.analysis_results("amp").value.nominal_value, 0.5, delta=0.1
+        )
+        self.assertAlmostEqual(
+            result.analysis_results("tau").value.nominal_value, 0.3, delta=0.1
+        )
 
     def test_end_to_end_parallel_analysis(self):
         """Integration test for running two curve analyses in parallel."""
 
-        analysis1 = CurveAnalysis(models=[ExpressionModel(expr="amp * exp(-x/tau)", name="test")])
+        analysis1 = CurveAnalysis(
+            models=[ExpressionModel(expr="amp * exp(-x/tau)", name="test")]
+        )
         analysis1.set_options(
-            data_processor=DataProcessor(input_key="counts", data_actions=[Probability("1")]),
+            data_processor=DataProcessor(
+                input_key="counts", data_actions=[Probability("1")]
+            ),
             p0={"amp": 0.5, "tau": 0.3},
             result_parameters=["amp", "tau"],
             plot=False,
         )
 
-        analysis2 = CurveAnalysis(models=[ExpressionModel(expr="amp * exp(-x/tau)", name="test")])
+        analysis2 = CurveAnalysis(
+            models=[ExpressionModel(expr="amp * exp(-x/tau)", name="test")]
+        )
         analysis2.set_options(
-            data_processor=DataProcessor(input_key="counts", data_actions=[Probability("1")]),
+            data_processor=DataProcessor(
+                input_key="counts", data_actions=[Probability("1")]
+            ),
             p0={"amp": 0.7, "tau": 0.5},
             result_parameters=["amp", "tau"],
             plot=False,
@@ -434,9 +500,13 @@ class TestCurveAnalysis(CurveAnalysisTestCase):
     def test_get_init_params(self):
         """Integration test for getting initial parameter from overview entry."""
 
-        analysis = CurveAnalysis(models=[ExpressionModel(expr="amp * exp(-x/tau)", name="test")])
+        analysis = CurveAnalysis(
+            models=[ExpressionModel(expr="amp * exp(-x/tau)", name="test")]
+        )
         analysis.set_options(
-            data_processor=DataProcessor(input_key="counts", data_actions=[Probability("1")]),
+            data_processor=DataProcessor(
+                input_key="counts", data_actions=[Probability("1")]
+            ),
             p0={"amp": 0.45, "tau": 0.25},
             plot=False,
         )
@@ -484,13 +554,19 @@ class TestCurveAnalysis(CurveAnalysisTestCase):
             analysis.set_options(
                 filter_data={"setup": setup},
                 result_parameters=["amp"],
-                data_processor=DataProcessor(input_key="counts", data_actions=[Probability("1")]),
+                data_processor=DataProcessor(
+                    input_key="counts", data_actions=[Probability("1")]
+                ),
             )
             analyses.append(analysis)
 
         group_analysis = CompositeCurveAnalysis(analyses)
-        group_analysis.analyses("group_A").set_options(p0={"amp": 0.3, "freq": 2.1, "b": 0.5})
-        group_analysis.analyses("group_B").set_options(p0={"amp": 0.5, "freq": 3.2, "b": 0.5})
+        group_analysis.analyses("group_A").set_options(
+            p0={"amp": 0.3, "freq": 2.1, "b": 0.5}
+        )
+        group_analysis.analyses("group_B").set_options(
+            p0={"amp": 0.5, "freq": 3.2, "b": 0.5}
+        )
         group_analysis.set_options(plot=False)
 
         amp1 = 0.2
@@ -676,7 +752,9 @@ class TestFitOptions(QiskitExperimentsTestCase):
 
         with self.assertRaises(AnalysisError):
             # max-min tuple
-            FitOptions(["par0", "par1", "par2"], default_bounds=[(1, 0), (2, 1), (3, 2)])
+            FitOptions(
+                ["par0", "par1", "par2"], default_bounds=[(1, 0), (2, 1), (3, 2)]
+            )
 
     def test_detect_invalid_key(self):
         """Test if invalid key raises Error."""
@@ -688,7 +766,9 @@ class TestFitOptions(QiskitExperimentsTestCase):
     def test_set_extra_options(self):
         """Add extra fitter options."""
         opt = FitOptions(
-            ["par0", "par1", "par2"], default_p0=[0, 1, 2], default_bounds=[(0, 1), (1, 2), (2, 3)]
+            ["par0", "par1", "par2"],
+            default_p0=[0, 1, 2],
+            default_bounds=[(0, 1), (1, 2), (2, 3)],
         )
         opt.add_extra_options(ex1=0, ex2=1)
 
@@ -714,8 +794,12 @@ class TestFitOptions(QiskitExperimentsTestCase):
 
         # similar computation in algorithmic guess
 
-        opt.p0.set_if_empty(par0=5)  # this is ignored because user already provided initial guess
-        opt.p0.set_if_empty(par1=opt.p0["par0"] * 2 + 3)  # user provided guess propagates
+        opt.p0.set_if_empty(
+            par0=5
+        )  # this is ignored because user already provided initial guess
+        opt.p0.set_if_empty(
+            par1=opt.p0["par0"] * 2 + 3
+        )  # user provided guess propagates
 
         opt.bounds.set_if_empty(par0=(0, 10))  # this will be set
         opt.add_extra_options(fitter="algo1")
@@ -728,13 +812,21 @@ class TestFitOptions(QiskitExperimentsTestCase):
 
         ref_opt1 = {
             "p0": {"par0": 1.0, "par1": 5.0, "par2": 6.0},
-            "bounds": {"par0": (0.0, 10.0), "par1": (-100.0, 100.0), "par2": (-np.inf, np.inf)},
+            "bounds": {
+                "par0": (0.0, 10.0),
+                "par1": (-100.0, 100.0),
+                "par2": (-np.inf, np.inf),
+            },
             "fitter": "algo1",
         }
 
         ref_opt2 = {
             "p0": {"par0": 1.0, "par1": 5.0, "par2": 2.0},
-            "bounds": {"par0": (0.0, 10.0), "par1": (-100.0, 100.0), "par2": (-np.inf, np.inf)},
+            "bounds": {
+                "par0": (0.0, 10.0),
+                "par1": (-100.0, 100.0),
+                "par2": (-np.inf, np.inf),
+            },
             "fitter": "algo1",
         }
 
@@ -801,7 +893,11 @@ class TestBackwardCompatibility(QiskitExperimentsTestCase):
 
             class _DeprecatedAnalysis(CurveAnalysis):
                 __series__ = [
-                    SeriesDef(fit_func=lambda x, par0: fit_function.exponential_decay(x, amp=par0))
+                    SeriesDef(
+                        fit_func=lambda x, par0: fit_function.exponential_decay(
+                            x, amp=par0
+                        )
+                    )
                 ]
 
         with self.assertWarns(DeprecationWarning):

@@ -19,7 +19,9 @@ from qiskit_experiments.framework import ParallelExperiment
 
 from qiskit_experiments.library import QubitSpectroscopy, EFSpectroscopy
 from qiskit_experiments.test.mock_iq_backend import MockIQBackend, MockIQParallelBackend
-from qiskit_experiments.test.mock_iq_helpers import MockIQSpectroscopyHelper as SpectroscopyHelper
+from qiskit_experiments.test.mock_iq_helpers import (
+    MockIQSpectroscopyHelper as SpectroscopyHelper,
+)
 from qiskit_experiments.test.mock_iq_helpers import (
     MockIQParallelExperimentHelper as ParallelExperimentHelper,
 )
@@ -190,7 +192,9 @@ class TestQubitSpectroscopy(QiskitExperimentsTestCase):
         self.assertRoundTripSerializable(expdata, self.experiment_data_equiv)
 
         # Checking serialization of the analysis
-        self.assertRoundTripSerializable(expdata.analysis_results(1), self.analysis_result_equiv)
+        self.assertRoundTripSerializable(
+            expdata.analysis_results(1), self.analysis_result_equiv
+        )
 
     def test_kerneled_expdata_serialization(self):
         """Test experiment data and analysis data JSON serialization"""
@@ -218,7 +222,9 @@ class TestQubitSpectroscopy(QiskitExperimentsTestCase):
         self.assertRoundTripSerializable(expdata, self.experiment_data_equiv)
 
         # Checking serialization of the analysis
-        self.assertRoundTripSerializable(expdata.analysis_results(1), self.analysis_result_equiv)
+        self.assertRoundTripSerializable(
+            expdata.analysis_results(1), self.analysis_result_equiv
+        )
 
     def test_parallel_experiment(self):
         """Test for parallel experiment"""
@@ -267,7 +273,9 @@ class TestQubitSpectroscopy(QiskitExperimentsTestCase):
 
         # initializing parallel experiment
         par_experiment = ParallelExperiment(exp_list, backend=parallel_backend)
-        par_experiment.set_run_options(meas_level=MeasLevel.KERNELED, meas_return="single")
+        par_experiment.set_run_options(
+            meas_level=MeasLevel.KERNELED, meas_return="single"
+        )
 
         par_data = par_experiment.run().block_for_results()
         self.assertExperimentDone(par_data)

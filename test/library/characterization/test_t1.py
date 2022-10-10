@@ -23,7 +23,10 @@ from qiskit_experiments.framework import ExperimentData, ParallelExperiment
 from qiskit_experiments.library import T1
 from qiskit_experiments.library.characterization import T1Analysis, T1KerneledAnalysis
 from qiskit_experiments.test.mock_iq_backend import MockIQBackend, MockIQParallelBackend
-from qiskit_experiments.test.mock_iq_helpers import MockIQT1Helper, MockIQParallelExperimentHelper
+from qiskit_experiments.test.mock_iq_helpers import (
+    MockIQT1Helper,
+    MockIQParallelExperimentHelper,
+)
 
 
 class TestT1(QiskitExperimentsTestCase):
@@ -44,7 +47,9 @@ class TestT1(QiskitExperimentsTestCase):
         exp.analysis.set_options(p0={"amp": 1, "tau": t1, "base": 0})
         exp_data = exp.run(backend, shots=10000, seed_simulator=1).block_for_results()
         self.assertExperimentDone(exp_data)
-        self.assertRoundTripSerializable(exp_data, check_func=self.experiment_data_equiv)
+        self.assertRoundTripSerializable(
+            exp_data, check_func=self.experiment_data_equiv
+        )
         self.assertRoundTripPickle(exp_data, check_func=self.experiment_data_equiv)
         res = exp_data.analysis_results("T1")
         self.assertEqual(res.quality, "good")
@@ -78,7 +83,10 @@ class TestT1(QiskitExperimentsTestCase):
         backend = MockIQBackend(
             MockIQT1Helper(
                 t1=t1,
-                iq_cluster_centers=[((-5.0, -4.0), (-5.0, 4.0)), ((3.0, 1.0), (5.0, -3.0))],
+                iq_cluster_centers=[
+                    ((-5.0, -4.0), (-5.0, 4.0)),
+                    ((3.0, 1.0), (5.0, -3.0)),
+                ],
                 iq_cluster_width=[1.0, 2.0],
             )
         )
@@ -96,7 +104,9 @@ class TestT1(QiskitExperimentsTestCase):
         ).block_for_results()
         self.assertExperimentDone(expdata0)
 
-        self.assertRoundTripSerializable(expdata0, check_func=self.experiment_data_equiv)
+        self.assertRoundTripSerializable(
+            expdata0, check_func=self.experiment_data_equiv
+        )
         self.assertRoundTripPickle(expdata0, check_func=self.experiment_data_equiv)
 
         res = expdata0.analysis_results("T1")
@@ -123,7 +133,9 @@ class TestT1(QiskitExperimentsTestCase):
         exp2 = T1(qubit=qubit2, delays=delays)
 
         par_exp = ParallelExperiment([exp0, exp2])
-        res = par_exp.run(backend=backend, shots=10000, seed_simulator=1).block_for_results()
+        res = par_exp.run(
+            backend=backend, shots=10000, seed_simulator=1
+        ).block_for_results()
         self.assertExperimentDone(res)
 
         for i, qb in enumerate(quantum_bit):
@@ -256,7 +268,21 @@ class TestT1(QiskitExperimentsTestCase):
         data = ExperimentData()
         data.metadata.update({"meas_level": 2})
 
-        numbers = [750, 1800, 2750, 3550, 4250, 4850, 5450, 5900, 6400, 6800, 7000, 7350, 7700]
+        numbers = [
+            750,
+            1800,
+            2750,
+            3550,
+            4250,
+            4850,
+            5450,
+            5900,
+            6400,
+            6800,
+            7000,
+            7350,
+            7700,
+        ]
 
         for i, count0 in enumerate(numbers):
             data.add_data(

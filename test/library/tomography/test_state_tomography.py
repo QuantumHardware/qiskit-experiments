@@ -61,12 +61,17 @@ class TestStateTomography(QiskitExperimentsTestCase):
 
                 # Check fit state fidelity
                 fid = filter_results(results, "state_fidelity").value
-                self.assertGreater(fid, f_threshold, msg=f"{fitter} fit fidelity is low")
+                self.assertGreater(
+                    fid, f_threshold, msg=f"{fitter} fit fidelity is low"
+                )
 
                 # Manually check fidelity
                 target_fid = qi.state_fidelity(state, target, validate=False)
                 self.assertAlmostEqual(
-                    fid, target_fid, places=6, msg=f"{fitter} result fidelity is incorrect"
+                    fid,
+                    target_fid,
+                    places=6,
+                    msg=f"{fitter} result fidelity is incorrect",
                 )
 
     def test_qst_teleport(self):
@@ -87,7 +92,8 @@ class TestStateTomography(QiskitExperimentsTestCase):
         # Check state is density matrix
         state = filter_results(results, "state").value
         self.assertTrue(
-            isinstance(state, qi.DensityMatrix), msg="fitted state is not a density matrix"
+            isinstance(state, qi.DensityMatrix),
+            msg="fitted state is not a density matrix",
         )
 
         # Manually check fidelity
@@ -134,7 +140,9 @@ class TestStateTomography(QiskitExperimentsTestCase):
         for circ in tomo_circuits:
             meta = circ.metadata
             clbits = meta.get("clbits")
-            self.assertEqual(clbits, list(range(num_meas)), msg="metadata clbits is incorrect")
+            self.assertEqual(
+                clbits, list(range(num_meas)), msg="metadata clbits is incorrect"
+            )
 
         # Check analysis target is correct
         target_state = exp.analysis.options.target
@@ -177,7 +185,8 @@ class TestStateTomography(QiskitExperimentsTestCase):
         # Check state is density matrix
         state = filter_results(results, "state").value
         self.assertTrue(
-            isinstance(state, qi.DensityMatrix), msg="fitted state is not density matrix"
+            isinstance(state, qi.DensityMatrix),
+            msg="fitted state is not density matrix",
         )
 
         # Check fit state fidelity
@@ -186,7 +195,9 @@ class TestStateTomography(QiskitExperimentsTestCase):
 
         # Manually check fidelity
         target_fid = qi.state_fidelity(state, target, validate=False)
-        self.assertAlmostEqual(fid, target_fid, places=6, msg="result fidelity is incorrect")
+        self.assertAlmostEqual(
+            fid, target_fid, places=6, msg="result fidelity is incorrect"
+        )
 
     def test_expdata_serialization(self):
         """Test serializing experiment data works."""
@@ -199,7 +210,9 @@ class TestStateTomography(QiskitExperimentsTestCase):
 
     def test_experiment_config(self):
         """Test converting to and from config works"""
-        exp = StateTomography(QuantumCircuit(3), measurement_qubits=[0, 2], qubits=[5, 7, 1])
+        exp = StateTomography(
+            QuantumCircuit(3), measurement_qubits=[0, 2], qubits=[5, 7, 1]
+        )
         loaded_exp = StateTomography.from_config(exp.config())
         self.assertNotEqual(exp, loaded_exp)
         self.assertTrue(self.json_equiv(exp, loaded_exp))

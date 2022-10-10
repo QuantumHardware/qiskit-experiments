@@ -22,7 +22,9 @@ from qiskit.pulse import ScheduleBlock
 from qiskit_experiments.framework.experiment_data import ExperimentData
 from qiskit_experiments.calibration_management.calibrations import Calibrations
 from qiskit_experiments.calibration_management.parameter_value import ParameterValue
-from qiskit_experiments.calibration_management.calibration_key_types import ParameterValueType
+from qiskit_experiments.calibration_management.calibration_key_types import (
+    ParameterValueType,
+)
 from qiskit_experiments.exceptions import CalibrationError
 
 
@@ -126,7 +128,9 @@ class BaseUpdater(ABC):
         )
 
     @staticmethod
-    def get_value(exp_data: ExperimentData, param_name: str, index: Optional[int] = -1) -> float:
+    def get_value(
+        exp_data: ExperimentData, param_name: str, index: Optional[int] = -1
+    ) -> float:
         """A helper method to extract values from experiment data instances."""
         # Because this is called within analysis callbacks the block=False kwarg
         # must be passed to analysis results so we don't block indefinitely

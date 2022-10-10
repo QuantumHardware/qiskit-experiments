@@ -21,7 +21,10 @@ import numpy as np
 from qiskit.quantum_info.operators.predicates import matrix_equal
 from qiskit.providers.fake_provider import FakeParisV2
 from qiskit_ibm_experiment import IBMExperimentService
-from qiskit_experiments.library.characterization import LocalReadoutError, CorrelatedReadoutError
+from qiskit_experiments.library.characterization import (
+    LocalReadoutError,
+    CorrelatedReadoutError,
+)
 from qiskit_experiments.framework import ExperimentData
 from qiskit_experiments.framework import ParallelExperiment
 from qiskit_experiments.framework.json import ExperimentEncoder, ExperimentDecoder
@@ -40,7 +43,14 @@ class TestRedoutError(QiskitExperimentsTestCase):
                 "shots": 1024,
             },
             {
-                "counts": {"111": 930, "110": 39, "011": 24, "101": 29, "010": 1, "100": 1},
+                "counts": {
+                    "111": 930,
+                    "110": 39,
+                    "011": 24,
+                    "101": 29,
+                    "010": 1,
+                    "100": 1,
+                },
                 "metadata": {"state_label": "111"},
                 "shots": 1024,
             },
@@ -60,7 +70,9 @@ class TestRedoutError(QiskitExperimentsTestCase):
 
         self.assertEqual(len(qubits), mitigator._num_qubits)
         self.assertEqual(qubits, mitigator._qubits)
-        self.assertTrue(matrix_equal(expected_assignment_matrices, mitigator._assignment_mats))
+        self.assertTrue(
+            matrix_equal(expected_assignment_matrices, mitigator._assignment_mats)
+        )
 
     def test_correlated_analysis(self):
         """Tests correlated mitigator generation from experimental data"""
@@ -77,7 +89,14 @@ class TestRedoutError(QiskitExperimentsTestCase):
                 "shots": 1024,
             },
             {
-                "counts": {"000": 30, "010": 965, "110": 15, "011": 11, "001": 2, "100": 1},
+                "counts": {
+                    "000": 30,
+                    "010": 965,
+                    "110": 15,
+                    "011": 11,
+                    "001": 2,
+                    "100": 1,
+                },
                 "metadata": {"state_label": "010"},
                 "shots": 1024,
             },
@@ -110,13 +129,58 @@ class TestRedoutError(QiskitExperimentsTestCase):
 
         expected_assignment_matrix = np.array(
             [
-                [0.96582031, 0.03515625, 0.02929688, 0.0, 0.01953125, 0.0, 0.00097656, 0.0],
-                [0.01464844, 0.94824219, 0.00195312, 0.02636719, 0.0, 0.03320312, 0.0, 0.0],
+                [
+                    0.96582031,
+                    0.03515625,
+                    0.02929688,
+                    0.0,
+                    0.01953125,
+                    0.0,
+                    0.00097656,
+                    0.0,
+                ],
+                [
+                    0.01464844,
+                    0.94824219,
+                    0.00195312,
+                    0.02636719,
+                    0.0,
+                    0.03320312,
+                    0.0,
+                    0.0,
+                ],
                 [0.01171875, 0.0, 0.94238281, 0.02539062, 0.0, 0.0, 0.02050781, 0.0],
                 [0.0, 0.00195312, 0.01074219, 0.93261719, 0.0, 0.0, 0.0, 0.02246094],
-                [0.00683594, 0.0, 0.00097656, 0.0, 0.95996094, 0.03125, 0.02539062, 0.00097656],
-                [0.00097656, 0.01464844, 0.0, 0.0, 0.0078125, 0.92480469, 0.0, 0.02636719],
-                [0.0, 0.0, 0.01464844, 0.00097656, 0.01269531, 0.0, 0.94238281, 0.03417969],
+                [
+                    0.00683594,
+                    0.0,
+                    0.00097656,
+                    0.0,
+                    0.95996094,
+                    0.03125,
+                    0.02539062,
+                    0.00097656,
+                ],
+                [
+                    0.00097656,
+                    0.01464844,
+                    0.0,
+                    0.0,
+                    0.0078125,
+                    0.92480469,
+                    0.0,
+                    0.02636719,
+                ],
+                [
+                    0.0,
+                    0.0,
+                    0.01464844,
+                    0.00097656,
+                    0.01269531,
+                    0.0,
+                    0.94238281,
+                    0.03417969,
+                ],
                 [0.0, 0.0, 0.0, 0.01464844, 0.0, 0.01074219, 0.01074219, 0.91601562],
             ]
         )
@@ -130,7 +194,9 @@ class TestRedoutError(QiskitExperimentsTestCase):
 
         self.assertEqual(len(qubits), mitigator._num_qubits)
         self.assertEqual(qubits, mitigator._qubits)
-        self.assertTrue(matrix_equal(expected_assignment_matrix, mitigator.assignment_matrix()))
+        self.assertTrue(
+            matrix_equal(expected_assignment_matrix, mitigator.assignment_matrix())
+        )
 
     def test_circuit_generation(self):
         """Verifies circuits are generated by the experiments"""
@@ -178,4 +244,6 @@ class TestRedoutError(QiskitExperimentsTestCase):
         mitigator = exp_data.analysis_results(0).value
         serialized = json.dumps(mitigator, cls=ExperimentEncoder)
         loaded = json.loads(serialized, cls=ExperimentDecoder)
-        self.assertTrue(matrix_equal(mitigator.assignment_matrix(), loaded.assignment_matrix()))
+        self.assertTrue(
+            matrix_equal(mitigator.assignment_matrix(), loaded.assignment_matrix())
+        )

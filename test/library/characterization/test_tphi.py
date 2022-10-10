@@ -16,7 +16,9 @@ Test T2Ramsey experiment
 from test.base import QiskitExperimentsTestCase
 from qiskit_experiments.library import Tphi
 from qiskit_experiments.test.noisy_delay_aer_simulator import NoisyDelayAerBackend
-from qiskit_experiments.library.characterization.analysis.tphi_analysis import TphiAnalysis
+from qiskit_experiments.library.characterization.analysis.tphi_analysis import (
+    TphiAnalysis,
+)
 
 
 class TestTphi(QiskitExperimentsTestCase):

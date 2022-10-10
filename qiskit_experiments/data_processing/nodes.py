@@ -23,7 +23,10 @@ import numpy as np
 from uncertainties import unumpy as unp, ufloat
 
 from qiskit.result.postprocess import format_counts_memory
-from qiskit_experiments.data_processing.data_action import DataAction, TrainableDataAction
+from qiskit_experiments.data_processing.data_action import (
+    DataAction,
+    TrainableDataAction,
+)
 from qiskit_experiments.data_processing.exceptions import DataProcessorError
 from qiskit_experiments.data_processing.discriminator import BaseDiscriminator
 from qiskit_experiments.framework import Options
@@ -96,7 +99,9 @@ class AverageData(DataAction):
 
     def __repr__(self):
         """String representation of the node."""
-        return f"{self.__class__.__name__}(validate={self._validate}, axis={self._axis})"
+        return (
+            f"{self.__class__.__name__}(validate={self._validate}, axis={self._axis})"
+        )
 
 
 class MinMaxNormalize(DataAction):
@@ -220,7 +225,9 @@ class SVD(TrainableDataAction):
             DataProcessorError: If the SVD has not been previously trained on data.
         """
         if not self.is_trained:
-            raise DataProcessorError("SVD must be trained on data before it can be used.")
+            raise DataProcessorError(
+                "SVD must be trained on data before it can be used."
+            )
 
         # IQ axis is reduced by projection
         if self._n_shots == 0:
@@ -382,7 +389,9 @@ class IQPart(DataAction):
 
     def __repr__(self):
         """String representation of the node."""
-        return f"{self.__class__.__name__}(validate={self._validate}, scale={self.scale})"
+        return (
+            f"{self.__class__.__name__}(validate={self._validate}, scale={self.scale})"
+        )
 
 
 class ToReal(IQPart):
@@ -524,16 +533,24 @@ class DiscriminatorNode(DataAction):
             for dim in shape[:-1]:
                 data_length *= dim
 
-            data = data.reshape((data_length, 2))  # the last dim is guaranteed by _process
+            data = data.reshape(
+                (data_length, 2)
+            )  # the last dim is guaranteed by _process
 
             # Classify the data using the discriminator and reshape it to dim_1 x ... x dim_k
-            classified = np.array(self._discriminator.predict(data)).reshape(shape[0:-1])
+            classified = np.array(self._discriminator.predict(data)).reshape(
+                shape[0:-1]
+            )
 
         # case where a discriminator is applied to each slot.
         else:
-            classified = np.empty((self._n_circs, self._n_shots, self._n_slots), dtype=str)
+            classified = np.empty(
+                (self._n_circs, self._n_shots, self._n_slots), dtype=str
+            )
             for idx, discriminator in enumerate(self._discriminator):
-                sub_data = data[:, :, idx, :].reshape((self._n_circs * self._n_shots, 2))
+                sub_data = data[:, :, idx, :].reshape(
+                    (self._n_circs * self._n_shots, 2)
+                )
                 sub_classified = np.array(discriminator.predict(sub_data))
                 sub_classified = sub_classified.reshape((self._n_circs, self._n_shots))
                 classified[:, :, idx] = sub_classified
@@ -667,7 +684,9 @@ class MarginalizeCounts(CountsAction):
         for datum in data:
             new_counts = defaultdict(int)
             for bit_str, count in datum.items():
-                new_counts["".join([bit_str[::-1][idx] for idx in self._qubits_to_keep])] += count
+                new_counts[
+                    "".join([bit_str[::-1][idx] for idx in self._qubits_to_keep])
+                ] += count
 
             marginalized_counts.append(new_counts)
 
@@ -774,7 +793,10 @@ class Probability(CountsAction):
         for idx, counts_dict in enumerate(data):
             shots = sum(counts_dict.values())
             freq = counts_dict.get(self._outcome, 0)
-            alpha_posterior = [freq + self._alpha_prior[0], shots - freq + self._alpha_prior[1]]
+            alpha_posterior = [
+                freq + self._alpha_prior[0],
+                shots - freq + self._alpha_prior[1],
+            ]
             alpha_sum = sum(alpha_posterior)
 
             p_mean = alpha_posterior[0] / alpha_sum
@@ -902,7 +924,9 @@ class RestlessNode(DataAction, ABC):
     """
 
     def __init__(
-        self, validate: bool = True, memory_allocation: ShotOrder = ShotOrder.circuit_first
+        self,
+        validate: bool = True,
+        memory_allocation: ShotOrder = ShotOrder.circuit_first,
     ):
         """Initialize a restless node.
 
@@ -1004,7 +1028,9 @@ class RestlessToCounts(RestlessNode):
         for idx, shot in enumerate(memory):
             shot = format_counts_memory(shot, header)
 
-            restless_adjusted_shot = RestlessToCounts._restless_classify(shot, prev_shot)
+            restless_adjusted_shot = RestlessToCounts._restless_classify(
+                shot, prev_shot
+            )
 
             circuit_idx = idx % self._n_circuits
 

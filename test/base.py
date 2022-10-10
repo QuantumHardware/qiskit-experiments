@@ -56,10 +56,13 @@ class QiskitExperimentsTestCase(QiskitTestCase):
         self.assertEqual(
             experiment_data.status(),
             ExperimentStatus.DONE,
-            msg="All threads are executed but status is not DONE. " + experiment_data.errors(),
+            msg="All threads are executed but status is not DONE. "
+            + experiment_data.errors(),
         )
 
-    def assertRoundTripSerializable(self, obj: Any, check_func: Optional[Callable] = None):
+    def assertRoundTripSerializable(
+        self, obj: Any, check_func: Optional[Callable] = None
+    ):
         """Assert that an object is round trip serializable.
 
         Args:
@@ -115,9 +118,13 @@ class QiskitExperimentsTestCase(QiskitTestCase):
         skipped = tuple()
 
         if isinstance(data1, skipped) and isinstance(data2, skipped):
-            warnings.warn(f"Equivalence check for data {data1.__class__.__name__} is skipped.")
+            warnings.warn(
+                f"Equivalence check for data {data1.__class__.__name__} is skipped."
+            )
             return True
-        elif isinstance(data1, configurable_type) and isinstance(data2, configurable_type):
+        elif isinstance(data1, configurable_type) and isinstance(
+            data2, configurable_type
+        ):
             return cls.json_equiv(data1.config(), data2.config())
         elif dataclasses.is_dataclass(data1) and dataclasses.is_dataclass(data2):
             # not using asdict. this copies all objects.
@@ -130,7 +137,9 @@ class QiskitExperimentsTestCase(QiskitTestCase):
             return np.allclose(data1, data2)
         elif isinstance(data1, list_type) and isinstance(data2, list_type):
             return all(cls.json_equiv(e1, e2) for e1, e2 in zip(data1, data2))
-        elif isinstance(data1, uncertainties.UFloat) and isinstance(data2, uncertainties.UFloat):
+        elif isinstance(data1, uncertainties.UFloat) and isinstance(
+            data2, uncertainties.UFloat
+        ):
             return cls.ufloat_equiv(data1, data2)
         elif isinstance(data1, Model) and isinstance(data2, Model):
             return cls.json_equiv(data1.dumps(), data2.dumps())

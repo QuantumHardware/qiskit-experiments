@@ -68,7 +68,9 @@ class TestResonatorSpectroscopy(QiskitExperimentsTestCase):
 
     def test_roundtrip_serializable(self):
         """Test round trip JSON serialization"""
-        exp = ResonatorSpectroscopy(1, frequencies=np.linspace(int(100e6), int(150e6), int(20e6)))
+        exp = ResonatorSpectroscopy(
+            1, frequencies=np.linspace(int(100e6), int(150e6), int(20e6))
+        )
         self.assertRoundTripSerializable(exp, self.json_equiv)
 
     @data(-5e6, 0, 3e6)
@@ -99,7 +101,9 @@ class TestResonatorSpectroscopy(QiskitExperimentsTestCase):
         self.assertRoundTripSerializable(expdata, self.experiment_data_equiv)
 
         # Checking serialization of the analysis
-        self.assertRoundTripSerializable(expdata.analysis_results(1), self.analysis_result_equiv)
+        self.assertRoundTripSerializable(
+            expdata.analysis_results(1), self.analysis_result_equiv
+        )
 
     def test_parallel_experiment(self):
         """Test for parallel experiment"""
@@ -155,7 +159,9 @@ class TestResonatorSpectroscopy(QiskitExperimentsTestCase):
         parallel_backend.experiment_helper = parallel_helper
 
         par_experiment = ParallelExperiment(exp_list, backend=parallel_backend)
-        par_experiment.set_run_options(meas_level=MeasLevel.KERNELED, meas_return="single")
+        par_experiment.set_run_options(
+            meas_level=MeasLevel.KERNELED, meas_return="single"
+        )
 
         par_data = par_experiment.run().block_for_results()
         self.assertExperimentDone(par_data)
@@ -168,4 +174,6 @@ class TestResonatorSpectroscopy(QiskitExperimentsTestCase):
         for child_data in par_data.child_data():
             self.assertRoundTripSerializable(child_data, self.experiment_data_equiv)
             for analysis_result in child_data.analysis_results():
-                self.assertRoundTripSerializable(analysis_result, self.analysis_result_equiv)
+                self.assertRoundTripSerializable(
+                    analysis_result, self.analysis_result_equiv
+                )

@@ -72,7 +72,9 @@ class ParameterValue:
         self.date_time = self.date_time.astimezone()
 
         if not isinstance(self.value, (int, float, complex)):
-            raise CalibrationError(f"Values {self.value} must be int, float or complex.")
+            raise CalibrationError(
+                f"Values {self.value} must be int, float or complex."
+            )
 
         if not isinstance(self.date_time, datetime):
             raise CalibrationError(f"Datetime {self.date_time} must be a datetime.")

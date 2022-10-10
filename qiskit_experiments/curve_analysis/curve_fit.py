@@ -32,7 +32,9 @@ def curve_fit(
     ydata: np.ndarray,
     p0: Union[Dict[str, float], np.ndarray],
     sigma: Optional[np.ndarray] = None,
-    bounds: Optional[Union[Dict[str, Tuple[float, float]], Tuple[np.ndarray, np.ndarray]]] = None,
+    bounds: Optional[
+        Union[Dict[str, Tuple[float, float]], Tuple[np.ndarray, np.ndarray]]
+    ] = None,
     **kwargs,
 ) -> FitData:
     r"""Perform a non-linear least squares to fit
@@ -131,7 +133,13 @@ def curve_fit(
     try:
         # pylint: disable = unbalanced-tuple-unpacking
         popt, pcov = opt.curve_fit(
-            fit_func, xdata, ydata, sigma=sigma, p0=param_p0, bounds=param_bounds, **kwargs
+            fit_func,
+            xdata,
+            ydata,
+            sigma=sigma,
+            p0=param_p0,
+            bounds=param_bounds,
+            **kwargs,
         )
     except Exception as ex:
         raise AnalysisError(
@@ -146,7 +154,9 @@ def curve_fit(
     else:
         # Ignore correlations, add standard error if finite.
         fit_params = [
-            uncertainties.ufloat(nominal_value=n, std_dev=s if np.isfinite(s) else np.nan)
+            uncertainties.ufloat(
+                nominal_value=n, std_dev=s if np.isfinite(s) else np.nan
+            )
             for n, s in zip(popt, np.sqrt(np.diag(pcov)))
         ]
 
@@ -177,7 +187,9 @@ def multi_curve_fit(
     p0: np.ndarray,
     sigma: Optional[np.ndarray] = None,
     weights: Optional[np.ndarray] = None,
-    bounds: Optional[Union[Dict[str, Tuple[float, float]], Tuple[np.ndarray, np.ndarray]]] = None,
+    bounds: Optional[
+        Union[Dict[str, Tuple[float, float]], Tuple[np.ndarray, np.ndarray]]
+    ] = None,
     **kwargs,
 ) -> FitData:
     r"""Perform a linearized multi-objective non-linear least squares fit.

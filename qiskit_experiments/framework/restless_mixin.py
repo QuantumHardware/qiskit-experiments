@@ -121,7 +121,9 @@ class RestlessMixin:
         # The excited state promotion readout analysis option is set to
         # False because it is not compatible with a restless experiment.
         meas_level = self._default_run_options().get("meas_level", MeasLevel.CLASSIFIED)
-        meas_return = self._default_run_options().get("meas_return", MeasReturnType.SINGLE)
+        meas_return = self._default_run_options().get(
+            "meas_return", MeasReturnType.SINGLE
+        )
         if not self.analysis.options.get("data_processor", None):
             self.set_run_options(
                 rep_delay=rep_delay,
@@ -156,7 +158,9 @@ class RestlessMixin:
                     "override_processor_by_restless is True."
                 )
 
-    def _get_restless_processor(self, meas_level: int = MeasLevel.CLASSIFIED) -> DataProcessor:
+    def _get_restless_processor(
+        self, meas_level: int = MeasLevel.CLASSIFIED
+    ) -> DataProcessor:
         """Returns the restless experiments data processor.
 
         Notes:

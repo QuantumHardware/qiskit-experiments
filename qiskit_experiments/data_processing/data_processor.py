@@ -39,7 +39,10 @@ from typing import Dict, List, Set, Tuple, Union, Any
 import numpy as np
 from uncertainties import unumpy as unp
 
-from qiskit_experiments.data_processing.data_action import DataAction, TrainableDataAction
+from qiskit_experiments.data_processing.data_action import (
+    DataAction,
+    TrainableDataAction,
+)
 from qiskit_experiments.data_processing.exceptions import DataProcessorError
 
 
@@ -276,7 +279,9 @@ class DataProcessor:
         """String representation of data processors."""
         names = ", ".join(repr(node) for node in self._nodes)
 
-        return f"{self.__class__.__name__}(input_key={self._input_key}, nodes=[{names}])"
+        return (
+            f"{self.__class__.__name__}(input_key={self._input_key}, nodes=[{names}])"
+        )
 
     def __json_encode__(self) -> Dict[str, Any]:
         """Return the config dict for this data processor."""
@@ -292,4 +297,6 @@ class DataProcessor:
         try:
             return cls(input_key=config["input_key"], data_actions=config["nodes"])
         except KeyError as ex:
-            raise KeyError("Imperfect configuration data. Cannot load this processor.") from ex
+            raise KeyError(
+                "Imperfect configuration data. Cannot load this processor."
+            ) from ex

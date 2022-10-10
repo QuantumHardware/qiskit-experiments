@@ -75,7 +75,11 @@ class BatchExperiment(CompositeExperiment):
                     logical_qubit += 1
         qubits = tuple(self._qubit_map.keys())
         super().__init__(
-            experiments, qubits, backend=backend, analysis=analysis, flatten_results=flatten_results
+            experiments,
+            qubits,
+            backend=backend,
+            analysis=analysis,
+            flatten_results=flatten_results,
         )
 
     def circuits(self):
@@ -92,7 +96,9 @@ class BatchExperiment(CompositeExperiment):
             if self.physical_qubits == expr.physical_qubits or to_transpile:
                 qubit_mapping = None
             else:
-                qubit_mapping = [self._qubit_map[qubit] for qubit in expr.physical_qubits]
+                qubit_mapping = [
+                    self._qubit_map[qubit] for qubit in expr.physical_qubits
+                ]
 
             if isinstance(expr, BatchExperiment):
                 # Batch experiments don't contain their own native circuits.
@@ -123,7 +129,9 @@ class BatchExperiment(CompositeExperiment):
         """Remap qubits if physical qubit layout is different to batch layout"""
         num_qubits = self.num_qubits
         num_clbits = circuit.num_clbits
-        new_circuit = QuantumCircuit(num_qubits, num_clbits, name="batch_" + circuit.name)
+        new_circuit = QuantumCircuit(
+            num_qubits, num_clbits, name="batch_" + circuit.name
+        )
         new_circuit.metadata = circuit.metadata
         new_circuit.append(circuit, qubit_mapping, list(range(num_clbits)))
         return new_circuit

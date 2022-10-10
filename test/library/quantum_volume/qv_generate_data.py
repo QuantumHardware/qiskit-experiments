@@ -135,7 +135,9 @@ def create_qv_data_high_confidence(dir_path: str):
     with open(result_file_path, "w") as json_file:
         json.dump(qv_data.data(), json_file, cls=ExperimentEncoder)
 
-    result_file_path = os.path.join(dir_path, "qv_result_moderate_noise_300_trials.json")
+    result_file_path = os.path.join(
+        dir_path, "qv_result_moderate_noise_300_trials.json"
+    )
     with open(result_file_path, "w") as json_file:
         result_dicts = []
         for result in qv_data.analysis_results():

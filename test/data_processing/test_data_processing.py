@@ -61,8 +61,12 @@ class TestDataProcessor(BaseDataProcessorTest):
             ]
         )
 
-        res1 = ExperimentResult(shots=3, success=True, meas_level=1, data=mem1, header=self.header)
-        res2 = ExperimentResult(shots=3, success=True, meas_level=1, data=mem2, header=self.header)
+        res1 = ExperimentResult(
+            shots=3, success=True, meas_level=1, data=mem1, header=self.header
+        )
+        res2 = ExperimentResult(
+            shots=3, success=True, meas_level=1, data=mem2, header=self.header
+        )
 
         self.result_lvl1 = Result(results=[res1, res2], **self.base_result_args)
 
@@ -77,7 +81,9 @@ class TestDataProcessor(BaseDataProcessorTest):
             shots=10, success=True, meas_level=2, data=data2, header=self.header
         )
         self.exp_data_lvl2 = ExperimentData(FakeExperiment())
-        self.exp_data_lvl2.add_data(Result(results=[res1, res2], **self.base_result_args))
+        self.exp_data_lvl2.add_data(
+            Result(results=[res1, res2], **self.base_result_args)
+        )
 
     def test_data_prep_level1_memory_single(self):
         """Format meas_level=1 meas_return=single."""
@@ -250,7 +256,9 @@ class TestDataProcessor(BaseDataProcessorTest):
             "shots": 3,
         }
 
-        expected_new = np.array([[1103.26, 2959.012], [442.17, -5279.41], [3016.514, -3404.7560]])
+        expected_new = np.array(
+            [[1103.26, 2959.012], [442.17, -5279.41], [3016.514, -3404.7560]]
+        )
 
         self.assertEqual(exp_data.data(0), expected_old)
         np.testing.assert_array_almost_equal(
@@ -344,8 +352,16 @@ class TestDataProcessor(BaseDataProcessorTest):
 
         expected_new = np.array(
             [
-                [[-11378.508, -16488.753], [-19283.206, -15339.630], [-14548.009, -16743.348]],
-                [[-16630.257, -13752.518], [-16031.913, -15840.465], [-14955.998, -14538.923]],
+                [
+                    [-11378.508, -16488.753],
+                    [-19283.206, -15339.630],
+                    [-14548.009, -16743.348],
+                ],
+                [
+                    [-16630.257, -13752.518],
+                    [-16031.913, -15840.465],
+                    [-14955.998, -14538.923],
+                ],
             ]
         )
 
@@ -454,14 +470,21 @@ class TestIQSingleAvg(BaseDataProcessorTest):
             header=self.header,
         )
         res_avg = ExperimentResult(
-            shots=6, success=True, meas_level=1, meas_return="avg", data=mem_avg, header=self.header
+            shots=6,
+            success=True,
+            meas_level=1,
+            meas_return="avg",
+            data=mem_avg,
+            header=self.header,
         )
 
         # result_single = Result(results=[res_single], **self.base_result_args)
         # result_avg = Result(results=[res_avg], **self.base_result_args)
 
         self.exp_data_single = ExperimentData(FakeExperiment())
-        self.exp_data_single.add_data(Result(results=[res_single], **self.base_result_args))
+        self.exp_data_single.add_data(
+            Result(results=[res_single], **self.base_result_args)
+        )
 
         self.exp_data_avg = ExperimentData(FakeExperiment())
         self.exp_data_avg.add_data(Result(results=[res_avg], **self.base_result_args))
@@ -610,7 +633,9 @@ class TestAveragingAndSVD(BaseDataProcessorTest):
 
         self.data = ExperimentData(FakeExperiment())
         self.data.add_data(
-            Result(results=[res_es, res_gs, res_x90p, res_x45p], **self.base_result_args)
+            Result(
+                results=[res_es, res_gs, res_x90p, res_x45p], **self.base_result_args
+            )
         )
 
     def test_averaging(self):
@@ -715,7 +740,9 @@ class TestAveragingAndSVD(BaseDataProcessorTest):
         )
 
         # Test processing of each datum individually
-        for idx, expected in enumerate([self._sig_es, self._sig_gs, self._sig_x90, self._sig_x45]):
+        for idx, expected in enumerate(
+            [self._sig_es, self._sig_gs, self._sig_x90, self._sig_x45]
+        ):
             processed = processor(self.data.data(idx))
             np.testing.assert_array_almost_equal(
                 unp.nominal_values(processed),
@@ -725,7 +752,9 @@ class TestAveragingAndSVD(BaseDataProcessorTest):
     def test_normalize(self):
         """Test that by adding a normalization node we get a signal between 1 and 1."""
 
-        processor = DataProcessor("memory", [AverageData(axis=1), SVD(), MinMaxNormalize()])
+        processor = DataProcessor(
+            "memory", [AverageData(axis=1), SVD(), MinMaxNormalize()]
+        )
 
         self.assertFalse(processor.is_trained)
         processor.train([self.data.data(idx) for idx in [0, 1]])
@@ -751,8 +780,12 @@ class TestAveragingAndSVD(BaseDataProcessorTest):
 
         processor = DataProcessor("memory", [AverageData(axis=1), svd_node])
 
-        dist_i_axis = {"memory": [[[-1, 0]], [[-0.5, 0]], [[0.0, 0]], [[0.5, 0]], [[1, 0]]]}
-        dist_q_axis = {"memory": [[[0, -1]], [[0, -0.5]], [[0, 0.0]], [[0, 0.5]], [[0, 1]]]}
+        dist_i_axis = {
+            "memory": [[[-1, 0]], [[-0.5, 0]], [[0.0, 0]], [[0.5, 0]], [[1, 0]]]
+        }
+        dist_q_axis = {
+            "memory": [[[0, -1]], [[0, -0.5]], [[0, 0.0]], [[0, 0.5]], [[0, 1]]]
+        }
 
         out_i = processor(dist_i_axis)
         self.assertAlmostEqual(out_i[0].nominal_value, 0.0)
@@ -823,7 +856,9 @@ class TestAvgDataAndSVD(BaseDataProcessorTest):
 
         self.data = ExperimentData(FakeExperiment())
         self.data.add_data(
-            Result(results=[res_es, res_gs, res_x90p, res_x45p], **self.base_result_args)
+            Result(
+                results=[res_es, res_gs, res_x90p, res_x45p], **self.base_result_args
+            )
         )
 
     def test_normalize(self):

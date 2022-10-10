@@ -25,7 +25,9 @@ from qiskit.circuit import Parameter
 import qiskit.pulse as pulse
 from qiskit.pulse import ScheduleBlock
 
-from qiskit_experiments.calibration_management.calibration_key_types import DefaultCalValue
+from qiskit_experiments.calibration_management.calibration_key_types import (
+    DefaultCalValue,
+)
 from qiskit_experiments.exceptions import CalibrationError
 
 
@@ -82,7 +84,9 @@ class BasisGateLibrary(ABC, Mapping):
     def __getitem__(self, name: str) -> ScheduleBlock:
         """Return the schedule."""
         if name not in self._schedules:
-            raise CalibrationError(f"Gate {name} is not contained in {self.__class__.__name__}.")
+            raise CalibrationError(
+                f"Gate {name} is not contained in {self.__class__.__name__}."
+            )
 
         return self._schedules[name]
 
@@ -143,7 +147,10 @@ class BasisGateLibrary(ABC, Mapping):
     def config(self) -> Dict[str, Any]:
         """Return the settings used to initialize the library."""
 
-        kwargs = {"basis_gates": self.basis_gates, "default_values": self._default_values}
+        kwargs = {
+            "basis_gates": self.basis_gates,
+            "default_values": self._default_values,
+        }
         kwargs.update(self._extra_kwargs)
 
         return {

@@ -71,7 +71,9 @@ class MockIQExperimentHelper:
 
         """
         self._iq_cluster_centers = (
-            iq_cluster_centers if iq_cluster_centers is not None else [((-1.0, -1.0), (1.0, 1.0))]
+            iq_cluster_centers
+            if iq_cluster_centers is not None
+            else [((-1.0, -1.0), (1.0, 1.0))]
         )
         self._iq_cluster_width = (
             iq_cluster_width
@@ -100,7 +102,9 @@ class MockIQExperimentHelper:
         self._iq_cluster_width = iq_cluster_width
 
     @abstractmethod
-    def compute_probabilities(self, circuits: List[QuantumCircuit]) -> List[Dict[str, Any]]:
+    def compute_probabilities(
+        self, circuits: List[QuantumCircuit]
+    ) -> List[Dict[str, Any]]:
         """
         A function provided by the user which is used to determine the probability of each output of the
         circuit. The function returns a list of dictionaries, each containing output binary strings and
@@ -363,7 +367,9 @@ class MockIQParallelExperimentHelper(MockIQExperimentHelper):
         for helper in exp_helper_list:
             # checking there is no nested parallel experiment.
             if isinstance(helper, MockIQParallelExperimentHelper):
-                raise QiskitError("Nested parallel experiments aren't currently supported.")
+                raise QiskitError(
+                    "Nested parallel experiments aren't currently supported."
+                )
 
     def _parallel_exp_circ_splitter(self, qc_list: List[QuantumCircuit]):
         """
@@ -505,7 +511,9 @@ class MockIQDragHelper(MockIQExperimentHelper):
         self.max_probability = max_probability
         self.offset_probability = offset_probability
 
-    def compute_probabilities(self, circuits: List[QuantumCircuit]) -> List[Dict[str, float]]:
+    def compute_probabilities(
+        self, circuits: List[QuantumCircuit]
+    ) -> List[Dict[str, float]]:
         """Returns the probability based on the beta, number of gates, and leakage."""
 
         gate_name = self.gate_name
@@ -543,7 +551,9 @@ class MockIQFineDragHelper(MockIQExperimentHelper):
         super().__init__(iq_cluster_centers, iq_cluster_width)
         self.error = error
 
-    def compute_probabilities(self, circuits: List[QuantumCircuit]) -> List[Dict[str, float]]:
+    def compute_probabilities(
+        self, circuits: List[QuantumCircuit]
+    ) -> List[Dict[str, float]]:
         """Returns the probability based on error per gate."""
 
         error = self.error
@@ -575,7 +585,9 @@ class MockIQRabiHelper(MockIQExperimentHelper):
         super().__init__(iq_cluster_centers, iq_cluster_width)
         self.amplitude_to_angle = amplitude_to_angle
 
-    def compute_probabilities(self, circuits: List[QuantumCircuit]) -> List[Dict[str, float]]:
+    def compute_probabilities(
+        self, circuits: List[QuantumCircuit]
+    ) -> List[Dict[str, float]]:
         """Returns the probability based on the rotation angle and amplitude_to_angle."""
         amplitude_to_angle = self.amplitude_to_angle
         output_dict_list = []
@@ -616,7 +628,9 @@ class MockIQFineFreqHelper(MockIQExperimentHelper):
         self.freq_shift = freq_shift
         self.dt = dt
 
-    def compute_probabilities(self, circuits: List[QuantumCircuit]) -> List[Dict[str, float]]:
+    def compute_probabilities(
+        self, circuits: List[QuantumCircuit]
+    ) -> List[Dict[str, float]]:
         """Return the probability of being in the excited state."""
         sx_duration = self.sx_duration
         freq_shift = self.freq_shift
@@ -671,7 +685,9 @@ class MockIQFineAmpHelper(MockIQExperimentHelper):
         self.angle_per_gate = angle_per_gate
         self.gate_name = gate_name
 
-    def compute_probabilities(self, circuits: List[QuantumCircuit]) -> List[Dict[str, float]]:
+    def compute_probabilities(
+        self, circuits: List[QuantumCircuit]
+    ) -> List[Dict[str, float]]:
         """Return the probability of being in the excited state."""
         angle_error = self.angle_error
         angle_per_gate = self.angle_per_gate
@@ -710,7 +726,9 @@ class MockIQRamseyXYHelper(MockIQExperimentHelper):
         self.t2ramsey = t2ramsey
         self.freq_shift = freq_shift
 
-    def compute_probabilities(self, circuits: List[QuantumCircuit]) -> List[Dict[str, float]]:
+    def compute_probabilities(
+        self, circuits: List[QuantumCircuit]
+    ) -> List[Dict[str, float]]:
         """Return the probability of being in the excited state."""
         t2ramsey = self.t2ramsey
         freq_shift = self.freq_shift
@@ -758,7 +776,9 @@ class MockIQSpectroscopyHelper(MockIQExperimentHelper):
         self.line_width = line_width
         self.gate_name = gate_name
 
-    def compute_probabilities(self, circuits: List[QuantumCircuit]) -> List[Dict[str, float]]:
+    def compute_probabilities(
+        self, circuits: List[QuantumCircuit]
+    ) -> List[Dict[str, float]]:
         """Returns the probability based on the parameters provided."""
         freq_offset = self.freq_offset
         line_width = self.line_width
@@ -767,15 +787,21 @@ class MockIQSpectroscopyHelper(MockIQExperimentHelper):
             probability_output_dict = {}
             if self.gate_name == "measure":
                 freq_shift = (
-                    next(iter(circuit.calibrations[self.gate_name].values())).blocks[0].frequency
+                    next(iter(circuit.calibrations[self.gate_name].values()))
+                    .blocks[0]
+                    .frequency
                 )
             elif self.gate_name == "Spec":
                 freq_shift = next(iter(circuit.calibrations[self.gate_name]))[1][0]
             else:
-                raise ValueError(f"The gate name {str(self.gate_name)} isn't supported.")
+                raise ValueError(
+                    f"The gate name {str(self.gate_name)} isn't supported."
+                )
             delta_freq = freq_shift - freq_offset
 
-            probability_output_dict["1"] = np.abs(1 / (1 + 2.0j * delta_freq / line_width))
+            probability_output_dict["1"] = np.abs(
+                1 / (1 + 2.0j * delta_freq / line_width)
+            )
             probability_output_dict["0"] = 1 - probability_output_dict["1"]
             output_dict_list.append(probability_output_dict)
         return output_dict_list
@@ -790,7 +816,11 @@ class MockIQSpectroscopyHelper(MockIQExperimentHelper):
         if self.gate_name == "measure":
 
             for circ_idx, circ in enumerate(circuits):
-                freq_shift = next(iter(circ.calibrations["measure"].values())).blocks[0].frequency
+                freq_shift = (
+                    next(iter(circ.calibrations["measure"].values()))
+                    .blocks[0]
+                    .frequency
+                )
                 delta_freq_list[circ_idx] = freq_shift - self.freq_offset
         phase = [delta_freq / self.line_width for delta_freq in delta_freq_list]
         return phase
@@ -799,7 +829,9 @@ class MockIQSpectroscopyHelper(MockIQExperimentHelper):
 class MockIQReadoutAngleHelper(MockIQExperimentHelper):
     """Functions needed for Readout angle experiment on mock IQ backend"""
 
-    def compute_probabilities(self, circuits: List[QuantumCircuit]) -> List[Dict[str, float]]:
+    def compute_probabilities(
+        self, circuits: List[QuantumCircuit]
+    ) -> List[Dict[str, float]]:
         """Return the probability of being in the excited state."""
         output_dict_list = []
         for circuit in circuits:
@@ -822,7 +854,9 @@ class MockIQHalfAngleHelper(MockIQExperimentHelper):
         super().__init__(iq_cluster_centers, iq_cluster_width)
         self.error = error
 
-    def compute_probabilities(self, circuits: List[QuantumCircuit]) -> List[Dict[str, float]]:
+    def compute_probabilities(
+        self, circuits: List[QuantumCircuit]
+    ) -> List[Dict[str, float]]:
         """Return the probability of being in the excited state."""
         error = self.error
         output_dict_list = []
@@ -852,7 +886,9 @@ class MockIQT1Helper(MockIQExperimentHelper):
         super().__init__(iq_cluster_centers, iq_cluster_width)
         self._t1 = t1 or [90e-6]
 
-    def compute_probabilities(self, circuits: List[QuantumCircuit]) -> List[Dict[str, float]]:
+    def compute_probabilities(
+        self, circuits: List[QuantumCircuit]
+    ) -> List[Dict[str, float]]:
         """Return the probability of being in the excited state."""
         output_dict_list = []
         for circuit in circuits:
@@ -864,7 +900,9 @@ class MockIQT1Helper(MockIQExperimentHelper):
 
             # creating a probability dict.
             if qubit_idx >= len(self._t1):
-                raise QiskitError(f"There is no 'T1' value for qubit index {qubit_idx}.")
+                raise QiskitError(
+                    f"There is no 'T1' value for qubit index {qubit_idx}."
+                )
             probability_output_dict["1"] = np.exp(-delay / self._t1[qubit_idx])
             probability_output_dict["0"] = 1 - probability_output_dict["1"]
             output_dict_list.append(probability_output_dict)

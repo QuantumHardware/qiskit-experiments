@@ -208,7 +208,9 @@ def requires_device(func):
         )
 
         _backend = _get_backend(
-            qe_token=kwargs.pop("qe_token"), qe_url=kwargs.pop("qe_url"), backend_name=backend_name
+            qe_token=kwargs.pop("qe_token"),
+            qe_url=kwargs.pop("qe_url"),
+            backend_name=backend_name,
         )
         kwargs.update({"backend": _backend})
         return func(obj, *args, **kwargs)
@@ -238,7 +240,9 @@ def requires_runtime_device(func):
         if not backend_name:
             raise SkipTest("Runtime device not specified")
         _backend = _get_backend(
-            qe_token=kwargs.pop("qe_token"), qe_url=kwargs.pop("qe_url"), backend_name=backend_name
+            qe_token=kwargs.pop("qe_token"),
+            qe_url=kwargs.pop("qe_url"),
+            backend_name=backend_name,
         )
         kwargs.update({"backend": _backend})
         return func(obj, *args, **kwargs)
@@ -285,7 +289,8 @@ def _get_credentials():
         # load them from different environment variables. This assumes they
         # will always be in place, as is used by the Travis setup.
         return Credentials(
-            os.getenv("QISKIT_IBM_STAGING_API_TOKEN"), os.getenv("QISKIT_IBM_STAGING_API_URL")
+            os.getenv("QISKIT_IBM_STAGING_API_TOKEN"),
+            os.getenv("QISKIT_IBM_STAGING_API_URL"),
         )
 
     # Attempt to read the standard credentials.

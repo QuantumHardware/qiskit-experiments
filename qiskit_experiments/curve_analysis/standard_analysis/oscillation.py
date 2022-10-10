@@ -97,7 +97,9 @@ class OscillationAnalysis(curve.CurveAnalysis):
             base=curve.guess.constant_sinusoidal_offset(curve_data.y),
         )
         user_opt.p0.set_if_empty(
-            amp=curve.guess.max_height(curve_data.y - user_opt.p0["base"], absolute=True)[0],
+            amp=curve.guess.max_height(
+                curve_data.y - user_opt.p0["base"], absolute=True
+            )[0],
         )
 
         options = []
@@ -215,7 +217,9 @@ class DampedOscillationAnalysis(curve.CurveAnalysis):
 
             freqs = [freq_guess]
         else:
-            freq_guess = curve.guess.frequency(curve_data.x, curve_data.y - user_opt.p0["base"])
+            freq_guess = curve.guess.frequency(
+                curve_data.x, curve_data.y - user_opt.p0["base"]
+            )
 
             # The FFT might be up to 1/2 bin off
             if freq_guess > df:

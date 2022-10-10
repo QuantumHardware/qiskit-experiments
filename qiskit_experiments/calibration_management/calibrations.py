@@ -40,9 +40,13 @@ from qiskit.circuit import Parameter, ParameterExpression
 from qiskit.providers.backend import Backend
 
 from qiskit_experiments.exceptions import CalibrationError
-from qiskit_experiments.calibration_management.basis_gate_library import BasisGateLibrary
+from qiskit_experiments.calibration_management.basis_gate_library import (
+    BasisGateLibrary,
+)
 from qiskit_experiments.calibration_management.parameter_value import ParameterValue
-from qiskit_experiments.calibration_management.control_channel_map import ControlChannelMap
+from qiskit_experiments.calibration_management.control_channel_map import (
+    ControlChannelMap,
+)
 from qiskit_experiments.calibration_management.calibration_utils import used_in_calls
 from qiskit_experiments.calibration_management.calibration_key_types import (
     ParameterKey,
@@ -72,7 +76,9 @@ class Calibrations:
     def __init__(
         self,
         coupling_map: Optional[List[List[int]]] = None,
-        control_channel_map: Optional[Dict[Tuple[int, ...], List[ControlChannel]]] = None,
+        control_channel_map: Optional[
+            Dict[Tuple[int, ...], List[ControlChannel]]
+        ] = None,
         library: Optional[Union[BasisGateLibrary, List[BasisGateLibrary]]] = None,
         libraries: Optional[List[BasisGateLibrary]] = None,
         add_parameter_defaults: bool = True,
@@ -213,7 +219,9 @@ class Calibrations:
                 coupling map.
         """
         if not self._coupling_map and self._control_channel_map:
-            raise CalibrationError("No coupling map but a control channel map was found.")
+            raise CalibrationError(
+                "No coupling map but a control channel map was found."
+            )
 
         if self._coupling_map and self._control_channel_map:
             cmap_qubits = set(qubit for pair in self._coupling_map for qubit in pair)
@@ -276,10 +284,14 @@ class Calibrations:
 
         if add_parameter_defaults:
             for qubit, freq in enumerate(backend_data.drive_freqs):
-                cals.add_parameter_value(freq, cals.drive_freq, qubit, update_inst_map=False)
+                cals.add_parameter_value(
+                    freq, cals.drive_freq, qubit, update_inst_map=False
+                )
 
             for meas, freq in enumerate(backend_data.meas_freqs):
-                cals.add_parameter_value(freq, cals.meas_freq, meas, update_inst_map=False)
+                cals.add_parameter_value(
+                    freq, cals.meas_freq, meas, update_inst_map=False
+                )
 
         # Update the instruction schedule map after adding all parameter values.
         cals.update_inst_map()
@@ -325,7 +337,9 @@ class Calibrations:
 
         # Single qubits
         if self._coupling_map:
-            for qubit in set(qubit for coupled in self._coupling_map for qubit in coupled):
+            for qubit in set(
+                qubit for coupled in self._coupling_map for qubit in coupled
+            ):
                 operated_qubits[1].append([qubit])
         else:
             # Edge case for single-qubit device.
@@ -413,10 +427,14 @@ class Calibrations:
                 continue
 
             if qubits:
-                self._robust_inst_map_add(inst_map, sched_name, qubits, group, cutoff_date)
+                self._robust_inst_map_add(
+                    inst_map, sched_name, qubits, group, cutoff_date
+                )
             else:
                 for qubits_ in self._operated_qubits[self._schedules_qubits[key]]:
-                    self._robust_inst_map_add(inst_map, sched_name, qubits_, group, cutoff_date)
+                    self._robust_inst_map_add(
+                        inst_map, sched_name, qubits_, group, cutoff_date
+                    )
 
     def _robust_inst_map_add(
         self,
@@ -449,7 +467,9 @@ class Calibrations:
                 schedule = self.get_schedule(
                     sched_name, update_qubits, group=group, cutoff_date=cutoff
                 )
-                inst_map.add(instruction=sched_name, qubits=update_qubits, schedule=schedule)
+                inst_map.add(
+                    instruction=sched_name, qubits=update_qubits, schedule=schedule
+                )
             except CalibrationError:
                 # get_schedule may raise an error if not all parameters have values or
                 # default values. In this case we ignore and continue updating inst_map.
@@ -495,7 +515,9 @@ class Calibrations:
         instruction_name: str,
         qubits: Tuple[int],
         schedule_name: Optional[str] = None,
-        assign_params: Optional[Dict[Union[str, ParameterKey], ParameterValueType]] = None,
+        assign_params: Optional[
+            Dict[Union[str, ParameterKey], ParameterValueType]
+        ] = None,
     ):
         """Update a single instruction in the instruction schedule map.
 
@@ -568,7 +590,9 @@ class Calibrations:
         qubits = self._to_tuple(qubits)
 
         if len(qubits) == 0 and num_qubits is None:
-            raise CalibrationError("Both qubits and num_qubits cannot simultaneously be None.")
+            raise CalibrationError(
+                "Both qubits and num_qubits cannot simultaneously be None."
+            )
 
         num_qubits = len(qubits) or num_qubits
 
@@ -578,7 +602,10 @@ class Calibrations:
         sched_key = ScheduleKey(schedule.name, qubits)
 
         # Ensure one to one mapping between name and number of qubits.
-        if sched_key in self._schedules_qubits and self._schedules_qubits[sched_key] != num_qubits:
+        if (
+            sched_key in self._schedules_qubits
+            and self._schedules_qubits[sched_key] != num_qubits
+        ):
             raise CalibrationError(
                 f"Cannot add schedule {schedule.name} acting on {num_qubits} qubits."
                 "self already contains a schedule with the same name acting on "
@@ -634,8 +661,12 @@ class Calibrations:
                 if param not in param_indices:
                     params_to_register.add(param)
 
-        if len(params_to_register) != len(set(param.name for param in params_to_register)):
-            raise CalibrationError(f"Parameter names in {schedule.name} must be unique.")
+        if len(params_to_register) != len(
+            set(param.name for param in params_to_register)
+        ):
+            raise CalibrationError(
+                f"Parameter names in {schedule.name} must be unique."
+            )
 
         for param in params_to_register:
             self._register_parameter(param, qubits, schedule)
@@ -700,7 +731,9 @@ class Calibrations:
 
         raise CalibrationError(msg)
 
-    def remove_schedule(self, schedule: ScheduleBlock, qubits: Union[int, Tuple[int, ...]] = None):
+    def remove_schedule(
+        self, schedule: ScheduleBlock, qubits: Union[int, Tuple[int, ...]] = None
+    ):
         """Remove a schedule that was previously registered.
 
         Allows users to remove a schedule from the calibrations. The history of the parameters
@@ -816,7 +849,9 @@ class Calibrations:
 
         # 1) Check for qubit specific parameters.
         if ParameterKey(parameter_name, qubits, schedule_name) in self._parameter_map:
-            return self._parameter_map[ParameterKey(parameter_name, qubits, schedule_name)]
+            return self._parameter_map[
+                ParameterKey(parameter_name, qubits, schedule_name)
+            ]
 
         # 2) Check for default parameters.
         elif ParameterKey(parameter_name, (), schedule_name) in self._parameter_map:
@@ -904,12 +939,21 @@ class Calibrations:
         """
         if isinstance(chan.index, Parameter):
             if isinstance(
-                chan, (DriveChannel, MeasureChannel, AcquireChannel, RegisterSlot, MemorySlot)
+                chan,
+                (
+                    DriveChannel,
+                    MeasureChannel,
+                    AcquireChannel,
+                    RegisterSlot,
+                    MemorySlot,
+                ),
             ):
                 index = int(chan.index.name[2:].split("$")[0])
 
                 if len(qubits) <= index:
-                    raise CalibrationError(f"Not enough qubits given for channel {chan}.")
+                    raise CalibrationError(
+                        f"Not enough qubits given for channel {chan}."
+                    )
 
                 return qubits[index]
 
@@ -919,7 +963,9 @@ class Calibrations:
                 channel_index_parts = chan.index.name[2:].split("$")
                 qubit_channels = channel_index_parts[0]
 
-                indices = [int(sub_channel) for sub_channel in qubit_channels.split(".")]
+                indices = [
+                    int(sub_channel) for sub_channel in qubit_channels.split(".")
+                ]
                 ch_qubits = tuple(qubits[index] for index in indices)
                 chs_ = self._control_channel_map.get(ch_qubits, [])
 
@@ -1006,7 +1052,9 @@ class Calibrations:
         if len(candidates) == 0:
             for key in candidate_keys:
                 if ParameterKey(key.parameter, (), key.schedule) in self._params:
-                    candidates += self._params[ParameterKey(key.parameter, (), key.schedule)]
+                    candidates += self._params[
+                        ParameterKey(key.parameter, (), key.schedule)
+                    ]
 
         # 4) Filter candidate parameter values.
         if valid_only:
@@ -1105,7 +1153,9 @@ class Calibrations:
         elif (name, ()) in self._schedules:
             schedule = self._schedules[ScheduleKey(name, ())]
         else:
-            raise CalibrationError(f"Schedule {name} is not defined for qubits {qubits}.")
+            raise CalibrationError(
+                f"Schedule {name} is not defined for qubits {qubits}."
+            )
 
         # Retrieve the channel indices based on the qubits and bind them.
         binding_dict = {}
@@ -1117,7 +1167,9 @@ class Calibrations:
         schedule = schedule.assign_parameters(binding_dict, inplace=False)
 
         # Now assign the other parameters
-        assigned_schedule = self._assign(schedule, qubits, assign_params, group, cutoff_date)
+        assigned_schedule = self._assign(
+            schedule, qubits, assign_params, group, cutoff_date
+        )
 
         free_params = set()
         for param in assign_params.values():
@@ -1331,7 +1383,13 @@ class Calibrations:
         """
         data = []
         for key, sched in self._schedules.items():
-            data.append({"qubits": key.qubits, "schedule": sched, "parameters": sched.parameters})
+            data.append(
+                {
+                    "qubits": key.qubits,
+                    "schedule": sched,
+                    "parameters": sched.parameters,
+                }
+            )
 
         return data
 
@@ -1365,7 +1423,9 @@ class Calibrations:
 
         # Convert inputs to lists of strings
         if schedules is not None:
-            schedules = {sdl.name if isinstance(sdl, ScheduleBlock) else sdl for sdl in schedules}
+            schedules = {
+                sdl.name if isinstance(sdl, ScheduleBlock) else sdl for sdl in schedules
+            }
 
         # Look for exact matches. Default values will be ignored.
         keys = set()
@@ -1381,7 +1441,9 @@ class Calibrations:
 
         data = []
         if most_recent_only:
-            most_recent = {k: max(self._params[k], key=lambda x: x.date_time) for k in keys}
+            most_recent = {
+                k: max(self._params[k], key=lambda x: x.date_time) for k in keys
+            }
 
             for key, value in most_recent.items():
                 self._append_to_list(data, value, key, group)
@@ -1405,7 +1467,10 @@ class Calibrations:
 
     @staticmethod
     def _append_to_list(
-        data: List[Dict], value: ParameterValue, key: ParameterKey, group: Optional[str] = None
+        data: List[Dict],
+        value: ParameterValue,
+        key: ParameterKey,
+        group: Optional[str] = None,
     ):
         """Helper function to add a value to the data."""
         if group and value.group != group:
@@ -1415,7 +1480,9 @@ class Calibrations:
         value_dict["qubits"] = key.qubits
         value_dict["parameter"] = key.parameter
         value_dict["schedule"] = key.schedule
-        value_dict["date_time"] = value_dict["date_time"].strftime("%Y-%m-%d %H:%M:%S.%f%z")
+        value_dict["date_time"] = value_dict["date_time"].strftime(
+            "%Y-%m-%d %H:%M:%S.%f%z"
+        )
         data.append(value_dict)
 
     def save(
@@ -1454,7 +1521,9 @@ class Calibrations:
         Raises:
             CalibrationError: if the files exist and overwrite is not set to True.
         """
-        warnings.warn("Schedules are only saved in text format. They cannot be re-loaded.")
+        warnings.warn(
+            "Schedules are only saved in text format. They cannot be re-loaded."
+        )
 
         cwd = os.getcwd()
         if folder:
@@ -1470,10 +1539,14 @@ class Calibrations:
             )
 
         if os.path.isfile(parameter_value_file) and not overwrite:
-            raise CalibrationError(f"{parameter_value_file} already exists. Set overwrite to True.")
+            raise CalibrationError(
+                f"{parameter_value_file} already exists. Set overwrite to True."
+            )
 
         if os.path.isfile(schedule_file) and not overwrite:
-            raise CalibrationError(f"{schedule_file} already exists. Set overwrite to True.")
+            raise CalibrationError(
+                f"{schedule_file} already exists. Set overwrite to True."
+            )
 
         # Write the parameter configuration.
         header_keys = ["parameter.name", "parameter unique id", "schedule", "qubits"]
@@ -1491,7 +1564,9 @@ class Calibrations:
                 )
 
         if file_type == "csv":
-            with open(parameter_config_file, "w", newline="", encoding="utf-8") as output_file:
+            with open(
+                parameter_config_file, "w", newline="", encoding="utf-8"
+            ) as output_file:
                 dict_writer = csv.DictWriter(output_file, header_keys)
                 dict_writer.writeheader()
                 dict_writer.writerows(body)
@@ -1501,7 +1576,9 @@ class Calibrations:
             if len(values) > 0:
                 header_keys = values[0].keys()
 
-                with open(parameter_value_file, "w", newline="", encoding="utf-8") as output_file:
+                with open(
+                    parameter_value_file, "w", newline="", encoding="utf-8"
+                ) as output_file:
                     dict_writer = csv.DictWriter(output_file, header_keys)
                     dict_writer.writeheader()
                     dict_writer.writerows(values)
@@ -1533,7 +1610,9 @@ class Calibrations:
         # Serialize the schedules. For now we just print them.
         schedules = []
         for key, sched in self._schedules.items():
-            schedules.append({"name": key.schedule, "qubits": key.qubits, "schedule": str(sched)})
+            schedules.append(
+                {"name": key.schedule, "qubits": key.qubits, "schedule": str(sched)}
+            )
 
         return ["name", "qubits", "schedule"], schedules
 
@@ -1617,7 +1696,11 @@ class Calibrations:
 
         if isinstance(qubits, str):
             try:
-                return tuple(int(qubit) for qubit in qubits.strip("( )").split(",") if qubit != "")
+                return tuple(
+                    int(qubit)
+                    for qubit in qubits.strip("( )").split(",")
+                    if qubit != ""
+                )
             except ValueError:
                 pass
 
@@ -1704,7 +1787,9 @@ class Calibrations:
     def from_config(cls, config: Dict) -> "Calibrations":
         """Deserialize the calibrations given the input dictionary"""
 
-        config["kwargs"]["control_channel_map"] = config["kwargs"]["control_channel_map"].chan_map
+        config["kwargs"]["control_channel_map"] = config["kwargs"][
+            "control_channel_map"
+        ].chan_map
 
         calibrations = cls(**config["kwargs"])
 

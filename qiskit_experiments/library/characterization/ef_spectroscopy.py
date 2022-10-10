@@ -18,7 +18,9 @@ from qiskit.providers import Backend
 from qiskit.circuit import Gate
 
 from qiskit_experiments.curve_analysis import ParameterRepr
-from qiskit_experiments.library.characterization.qubit_spectroscopy import QubitSpectroscopy
+from qiskit_experiments.library.characterization.qubit_spectroscopy import (
+    QubitSpectroscopy,
+)
 
 
 class EFSpectroscopy(QubitSpectroscopy):

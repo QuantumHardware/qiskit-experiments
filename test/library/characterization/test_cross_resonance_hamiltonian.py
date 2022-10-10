@@ -201,11 +201,21 @@ class TestCrossResonanceHamiltonian(QiskitExperimentsTestCase):
         self.assertRoundTripSerializable(res_ix.value, check_func=self.ufloat_equiv)
         self.assertEqual(res_ix.extra["unit"], "Hz")
 
-        self.assertAlmostEqual(exp_data.analysis_results("omega_iy").value.n, iy, delta=delta)
-        self.assertAlmostEqual(exp_data.analysis_results("omega_iz").value.n, iz, delta=delta)
-        self.assertAlmostEqual(exp_data.analysis_results("omega_zx").value.n, zx, delta=delta)
-        self.assertAlmostEqual(exp_data.analysis_results("omega_zy").value.n, zy, delta=delta)
-        self.assertAlmostEqual(exp_data.analysis_results("omega_zz").value.n, zz, delta=delta)
+        self.assertAlmostEqual(
+            exp_data.analysis_results("omega_iy").value.n, iy, delta=delta
+        )
+        self.assertAlmostEqual(
+            exp_data.analysis_results("omega_iz").value.n, iz, delta=delta
+        )
+        self.assertAlmostEqual(
+            exp_data.analysis_results("omega_zx").value.n, zx, delta=delta
+        )
+        self.assertAlmostEqual(
+            exp_data.analysis_results("omega_zy").value.n, zy, delta=delta
+        )
+        self.assertAlmostEqual(
+            exp_data.analysis_results("omega_zz").value.n, zz, delta=delta
+        )
 
     def test_experiment_config(self):
         """Test converting to and from config works"""

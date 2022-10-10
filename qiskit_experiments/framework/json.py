@@ -31,7 +31,12 @@ import lmfit
 import numpy as np
 import scipy.sparse as sps
 import uncertainties
-from qiskit.circuit import ParameterExpression, QuantumCircuit, qpy_serialization, Instruction
+from qiskit.circuit import (
+    ParameterExpression,
+    QuantumCircuit,
+    qpy_serialization,
+    Instruction,
+)
 from qiskit.circuit.library import BlueprintCircuit
 from qiskit.quantum_info import DensityMatrix
 from qiskit.quantum_info.operators.channel.quantum_channel import QuantumChannel
@@ -181,7 +186,9 @@ def _serialize_and_encode(
     return _serialize_bytes(serialized_data, compress=compress)
 
 
-def _decode_and_deserialize(value: Dict, deserializer: Callable, name: Optional[str] = None) -> Any:
+def _decode_and_deserialize(
+    value: Dict, deserializer: Callable, name: Optional[str] = None
+) -> Any:
     """Decode and deserialize input data.
 
     Args:
@@ -224,7 +231,10 @@ def _serialize_safe_float(obj: any):
     elif isinstance(obj, dict):
         return {key: _serialize_safe_float(val) for key, val in obj.items()}
     elif isinstance(obj, complex):
-        return {"__type__": "complex", "__value__": _serialize_safe_float([obj.real, obj.imag])}
+        return {
+            "__type__": "complex",
+            "__value__": _serialize_safe_float([obj.real, obj.imag]),
+        }
     return obj
 
 
@@ -269,10 +279,14 @@ def _deserialize_type(value: Dict):
                 if name_ == name:
                     return obj
     except Exception as ex:  # pylint: disable=broad-except
-        traceback_msg = "".join(traceback.format_exception(type(ex), ex, ex.__traceback__))
+        traceback_msg = "".join(
+            traceback.format_exception(type(ex), ex, ex.__traceback__)
+        )
 
     # Show warning
-    warning_msg = f"Cannot deserialize {name}. The type could not be found in module {mod}."
+    warning_msg = (
+        f"Cannot deserialize {name}. The type could not be found in module {mod}."
+    )
     save_version = value.get("version", None)
     load_version = get_module_version(mod)
     _show_warning(
@@ -287,7 +301,9 @@ def _deserialize_type(value: Dict):
     return value
 
 
-def _serialize_object(obj: Any, settings: Optional[Dict] = None, safe_float: bool = True) -> Dict:
+def _serialize_object(
+    obj: Any, settings: Optional[Dict] = None, safe_float: bool = True
+) -> Dict:
     """Serialize a class instance from its init args and kwargs.
 
     Args:
@@ -329,7 +345,9 @@ def _deserialize_object(value: Dict) -> Any:
         try:
             return cls.__json_decode__(settings)
         except Exception as ex:  # pylint: disable=broad-except
-            traceback_msg = "".join(traceback.format_exception(type(ex), ex, ex.__traceback__))
+            traceback_msg = "".join(
+                traceback.format_exception(type(ex), ex, ex.__traceback__)
+            )
             warning_msg = (
                 f"Could not deserialize instance of class {cls} from value {settings} "
                 "using __json_decode__ method."
@@ -338,7 +356,9 @@ def _deserialize_object(value: Dict) -> Any:
         try:
             return cls(**settings)
         except Exception as ex:  # pylint: disable=broad-except
-            traceback_msg = "".join(traceback.format_exception(type(ex), ex, ex.__traceback__))
+            traceback_msg = "".join(
+                traceback.format_exception(type(ex), ex, ex.__traceback__)
+            )
             warning_msg = f"Could not deserialize instance of class {cls} from settings {settings}."
 
     # Display warning msg if deserialization failed
@@ -372,7 +392,9 @@ def _deserialize_object_legacy(value: Dict) -> Any:
         raise Exception(f"Unable to find class {class_name} in module {mod_name}")
 
     except Exception as ex:  # pylint: disable=broad-except
-        traceback_msg = "".join(traceback.format_exception(type(ex), ex, ex.__traceback__))
+        traceback_msg = "".join(
+            traceback.format_exception(type(ex), ex, ex.__traceback__)
+        )
         warning_msg = f"Unable to initialize {class_name}."
         _show_warning(warning_msg, traceback_msg=traceback_msg)
         return value
@@ -497,7 +519,8 @@ class ExperimentEncoder(json.JSONEncoder):
             circuit = QuantumCircuit(obj.num_qubits, obj.num_clbits)
             circuit.append(obj, range(obj.num_qubits), range(obj.num_clbits))
             value = _serialize_and_encode(
-                data=circuit, serializer=lambda buff, data: qpy_serialization.dump(data, buff)
+                data=circuit,
+                serializer=lambda buff, data: qpy_serialization.dump(data, buff),
             )
             return {"__type__": "Instruction", "__value__": value}
         if isinstance(obj, QuantumCircuit):
@@ -505,7 +528,8 @@ class ExperimentEncoder(json.JSONEncoder):
             if isinstance(obj, BlueprintCircuit):
                 obj = obj.decompose()
             value = _serialize_and_encode(
-                data=obj, serializer=lambda buff, data: qpy_serialization.dump(data, buff)
+                data=obj,
+                serializer=lambda buff, data: qpy_serialization.dump(data, buff),
             )
             return {"__type__": "QuantumCircuit", "__value__": value}
         if isinstance(obj, ParameterExpression):
@@ -526,7 +550,10 @@ class ExperimentEncoder(json.JSONEncoder):
             return _serialize_object(obj, settings=settings)
         if isinstance(obj, LocalReadoutMitigator):
             # Temporary handling until serialization is added to terra stable release
-            settings = {"assignment_matrices": obj._assignment_mats, "qubits": obj.qubits}
+            settings = {
+                "assignment_matrices": obj._assignment_mats,
+                "qubits": obj.qubits,
+            }
             return _serialize_object(obj, settings=settings)
         if isinstance(obj, CorrelatedReadoutMitigator):
             # Temporary handling until serialization is added to terra stable release
@@ -588,7 +615,9 @@ class ExperimentDecoder(json.JSONDecoder):
                 )[0]
                 return circuit.data[0][0]
             if obj_type == "QuantumCircuit":
-                return _decode_and_deserialize(obj_val, qpy_serialization.load, name=obj_type)[0]
+                return _decode_and_deserialize(
+                    obj_val, qpy_serialization.load, name=obj_type
+                )[0]
             if obj_type == "ParameterExpression":
                 return _decode_and_deserialize(
                     obj_val, qpy_serialization._read_parameter_expression, name=obj_type

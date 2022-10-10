@@ -112,7 +112,9 @@ class TestFramework(QiskitExperimentsTestCase):
         analysis = FakeAnalysis(arg1=10, arg2=20)
         analysis.set_options(option1=False, option2=True)
         config = analysis.config()
-        loaded = FakeAnalysis.from_config({"kwargs": config.kwargs, "options": config.options})
+        loaded = FakeAnalysis.from_config(
+            {"kwargs": config.kwargs, "options": config.options}
+        )
         self.assertEqual(config, loaded.config())
 
     def test_analysis_runtime_opts(self):

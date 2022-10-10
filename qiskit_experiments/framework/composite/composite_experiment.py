@@ -59,7 +59,8 @@ class CompositeExperiment(BaseExperiment):
         self._num_experiments = len(experiments)
         if analysis is None:
             analysis = CompositeAnalysis(
-                [exp.analysis for exp in self._experiments], flatten_results=flatten_results
+                [exp.analysis for exp in self._experiments],
+                flatten_results=flatten_results,
             )
         super().__init__(
             qubits,
@@ -83,7 +84,9 @@ class CompositeExperiment(BaseExperiment):
         """Return the number of sub experiments"""
         return self._num_experiments
 
-    def component_experiment(self, index=None) -> Union[BaseExperiment, List[BaseExperiment]]:
+    def component_experiment(
+        self, index=None
+    ) -> Union[BaseExperiment, List[BaseExperiment]]:
         """Return the component Experiment object.
 
         Args:

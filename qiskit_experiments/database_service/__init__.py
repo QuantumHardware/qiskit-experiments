@@ -32,4 +32,8 @@ Exceptions
    ExperimentEntryNotFound
 """
 
-from .exceptions import ExperimentDataError, ExperimentEntryExists, ExperimentEntryNotFound
+from .exceptions import (
+    ExperimentDataError,
+    ExperimentEntryExists,
+    ExperimentEntryNotFound,
+)

@@ -86,7 +86,12 @@ class TestRBUtilities(QiskitExperimentsTestCase):
         """
         epc_1_qubit = ufloat(0.0037, 0)
         qubits = [0]
-        gate_error_ratio = {((0,), "id"): 1, ((0,), "rz"): 0, ((0,), "sx"): 1, ((0,), "x"): 1}
+        gate_error_ratio = {
+            ((0,), "id"): 1,
+            ((0,), "rz"): 0,
+            ((0,), "sx"): 1,
+            ((0,), "x"): 1,
+        }
         gates_per_clifford = {((0,), "rz"): 10.5, ((0,), "sx"): 8.15, ((0,), "x"): 0.25}
         with self.assertWarns(DeprecationWarning):
             epg = rb.RBUtils.calculate_1q_epg(
@@ -104,7 +109,9 @@ class TestRBUtilities(QiskitExperimentsTestCase):
             self.assertAlmostEqual(
                 expected_epg.nominal_value, actual_epg.nominal_value, delta=0.001
             )
-            self.assertAlmostEqual(expected_epg.std_dev, actual_epg.std_dev, delta=0.001)
+            self.assertAlmostEqual(
+                expected_epg.std_dev, actual_epg.std_dev, delta=0.001
+            )
 
     def test_calculate_2q_epg(self):
         """Testing the calculation of 2 qubit error per gate
@@ -158,7 +165,9 @@ class TestRBUtilities(QiskitExperimentsTestCase):
 
         expected_epg = error_dict[((1, 4), "cx")]
         actual_epg = epg[(1, 4)]["cx"]
-        self.assertAlmostEqual(expected_epg.nominal_value, actual_epg.nominal_value, delta=0.001)
+        self.assertAlmostEqual(
+            expected_epg.nominal_value, actual_epg.nominal_value, delta=0.001
+        )
         self.assertAlmostEqual(expected_epg.std_dev, actual_epg.std_dev, delta=0.001)
 
     def test_coherence_limit(self):
@@ -167,13 +176,19 @@ class TestRBUtilities(QiskitExperimentsTestCase):
         t2 = 100.0
         gate_2_qubits = 0.5
         gate_1_qubit = 0.1
-        twoq_coherence_err = rb.RBUtils.coherence_limit(2, [t1, t1], [t2, t2], gate_2_qubits)
+        twoq_coherence_err = rb.RBUtils.coherence_limit(
+            2, [t1, t1], [t2, t2], gate_2_qubits
+        )
 
         oneq_coherence_err = rb.RBUtils.coherence_limit(1, [t1], [t2], gate_1_qubit)
 
-        self.assertAlmostEqual(oneq_coherence_err, 0.00049975, 6, "Error: 1Q Coherence Limit")
+        self.assertAlmostEqual(
+            oneq_coherence_err, 0.00049975, 6, "Error: 1Q Coherence Limit"
+        )
 
-        self.assertAlmostEqual(twoq_coherence_err, 0.00597, 5, "Error: 2Q Coherence Limit")
+        self.assertAlmostEqual(
+            twoq_coherence_err, 0.00597, 5, "Error: 2Q Coherence Limit"
+        )
 
     def test_clifford_1_qubit_generation(self):
         """Verify 1-qubit clifford indeed generates the correct group"""
@@ -945,7 +960,24 @@ class TestRBUtilities(QiskitExperimentsTestCase):
             cliffords.append(clifford)
 
         pauli_check_elements_list = [
-            [0, 36, 72, 108, 144, 180, 216, 252, 288, 324, 360, 396, 432, 468, 504, 540],
+            [
+                0,
+                36,
+                72,
+                108,
+                144,
+                180,
+                216,
+                252,
+                288,
+                324,
+                360,
+                396,
+                432,
+                468,
+                504,
+                540,
+            ],
             [
                 576,
                 900,

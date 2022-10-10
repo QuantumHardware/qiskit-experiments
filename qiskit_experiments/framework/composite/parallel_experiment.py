@@ -68,7 +68,11 @@ class ParallelExperiment(CompositeExperiment):
         for exp in experiments:
             qubits += exp.physical_qubits
         super().__init__(
-            experiments, qubits, backend=backend, analysis=analysis, flatten_results=flatten_results
+            experiments,
+            qubits,
+            backend=backend,
+            analysis=analysis,
+            flatten_results=flatten_results,
         )
 
     def circuits(self):
@@ -101,7 +105,9 @@ class ParallelExperiment(CompositeExperiment):
             # Qubit remapping for non-transpiled circuits
             if not device_layout:
                 qubits = list(range(sub_qubits, sub_qubits + sub_exp.num_qubits))
-                qargs_map = {q: qubits[i] for i, q in enumerate(sub_exp.physical_qubits)}
+                qargs_map = {
+                    q: qubits[i] for i, q in enumerate(sub_exp.physical_qubits)
+                }
                 sub_qubits += sub_exp.num_qubits
             else:
                 qubits = list(sub_exp.physical_qubits)
@@ -111,7 +117,9 @@ class ParallelExperiment(CompositeExperiment):
                 if circ_idx >= len(joint_circuits):
                     # Initialize new joint circuit or extract
                     # existing circuit if already initialized
-                    new_circuit = QuantumCircuit(num_qubits, name=f"parallel_exp_{circ_idx}")
+                    new_circuit = QuantumCircuit(
+                        num_qubits, name=f"parallel_exp_{circ_idx}"
+                    )
                     new_circuit.metadata = {
                         "experiment_type": self._type,
                         "composite_index": [],
@@ -137,10 +145,13 @@ class ParallelExperiment(CompositeExperiment):
                 # Note that this assumes the circuit was not expanded to use
                 # any qubits outside the specified physical qubits
                 for inst, qargs, cargs in sub_circ.data:
-                    mapped_cargs = [sub_cargs[sub_circ.find_bit(i).index] for i in cargs]
+                    mapped_cargs = [
+                        sub_cargs[sub_circ.find_bit(i).index] for i in cargs
+                    ]
                     try:
                         mapped_qargs = [
-                            circuit.qubits[qargs_map[sub_circ.find_bit(i).index]] for i in qargs
+                            circuit.qubits[qargs_map[sub_circ.find_bit(i).index]]
+                            for i in qargs
                         ]
                     except KeyError as ex:
                         # Instruction is outside physical qubits for the component
@@ -167,6 +178,8 @@ class ParallelExperiment(CompositeExperiment):
                 # Add the calibrations
                 for gate, cals in sub_circ.calibrations.items():
                     for key, sched in cals.items():
-                        circuit.add_calibration(gate, qubits=key[0], schedule=sched, params=key[1])
+                        circuit.add_calibration(
+                            gate, qubits=key[0], schedule=sched, params=key[1]
+                        )
 
         return joint_circuits

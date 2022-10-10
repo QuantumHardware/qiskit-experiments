@@ -18,8 +18,12 @@ import json
 from test.base import QiskitExperimentsTestCase
 import qiskit.pulse as pulse
 
-from qiskit_experiments.calibration_management.basis_gate_library import FixedFrequencyTransmon
-from qiskit_experiments.calibration_management.calibration_key_types import DefaultCalValue
+from qiskit_experiments.calibration_management.basis_gate_library import (
+    FixedFrequencyTransmon,
+)
+from qiskit_experiments.calibration_management.calibration_key_types import (
+    DefaultCalValue,
+)
 from qiskit_experiments.exceptions import CalibrationError
 from qiskit_experiments.framework.json import ExperimentEncoder, ExperimentDecoder
 
@@ -61,7 +65,9 @@ class TestFixedFrequencyTransmon(QiskitExperimentsTestCase):
         sched_sx = library["sx"]
         sched_sy = library["sy"]
 
-        self.assertEqual(sched_x.blocks[0].pulse.duration, sched_sx.blocks[0].pulse.duration)
+        self.assertEqual(
+            sched_x.blocks[0].pulse.duration, sched_sx.blocks[0].pulse.duration
+        )
         self.assertEqual(sched_x.blocks[0].pulse.sigma, sched_sx.blocks[0].pulse.sigma)
 
         self.assertEqual(len(sched_x.parameters & sched_y.parameters), 4)

@@ -31,7 +31,10 @@ from qiskit_experiments.framework.json import (
     _serialize_safe_float,
 )
 
-from qiskit_experiments.database_service.device_component import DeviceComponent, to_component
+from qiskit_experiments.database_service.device_component import (
+    DeviceComponent,
+    to_component,
+)
 from qiskit_experiments.database_service.exceptions import ExperimentDataError
 from qiskit_experiments.database_service.utils import qiskit_version
 
@@ -148,9 +151,13 @@ class AnalysisResult:
     def set_data(self, data: AnalysisResultData):
         """Sets the analysis data stored in the class"""
         self._db_data = data
-        new_device_components = [to_component(comp) for comp in self._db_data.device_components]
+        new_device_components = [
+            to_component(comp) for comp in self._db_data.device_components
+        ]
         self._db_data.device_components = new_device_components
-        self._db_data.quality = self.RESULT_QUALITY_TO_TEXT.get(self._db_data.quality, "unknown")
+        self._db_data.quality = self.RESULT_QUALITY_TO_TEXT.get(
+            self._db_data.quality, "unknown"
+        )
 
     @classmethod
     def default_source(cls) -> Dict[str, str]:
@@ -179,7 +186,9 @@ class AnalysisResult:
             if db_value is not None:
                 result_data["value"] = db_value
             if isinstance(value.std_dev, (int, float)):
-                result_data["variance"] = AnalysisResult._display_format(value.std_dev**2)
+                result_data["variance"] = AnalysisResult._display_format(
+                    value.std_dev**2
+                )
             if "unit" in result_data["_extra"]:
                 result_data["unit"] = result_data["_extra"]["unit"]
         else:
@@ -223,14 +232,18 @@ class AnalysisResult:
             return
         try:
             self.service.create_or_update_analysis_result(
-                self._db_data, json_encoder=self._json_encoder, create=not self._created_in_db
+                self._db_data,
+                json_encoder=self._json_encoder,
+                create=not self._created_in_db,
             )
             self._created_in_db = True
         except Exception as ex:  # pylint: disable=broad-except
             # Don't automatically fail the experiment just because its data cannot be saved.
             LOG.error("Unable to save the experiment data: %s", traceback.format_exc())
             if not suppress_errors:
-                raise QiskitError(f"Analysis result save failed\nError Message:\n{str(ex)}") from ex
+                raise QiskitError(
+                    f"Analysis result save failed\nError Message:\n{str(ex)}"
+                ) from ex
 
     def copy(self) -> "AnalysisResult":
         """Return a copy of the result with a new result ID"""
@@ -282,7 +295,9 @@ class AnalysisResult:
     def extra(self, new_value: Dict[str, Any]) -> None:
         """Set the analysis result value."""
         if not isinstance(new_value, dict):
-            raise ExperimentDataError(f"The `extra` field of {type(self).__name__} must be a dict.")
+            raise ExperimentDataError(
+                f"The `extra` field of {type(self).__name__} must be a dict."
+            )
         self._db_data.result_data["_extra"] = new_value
         if self.auto_save:
             self.save()
@@ -392,7 +407,9 @@ class AnalysisResult:
     def tags(self, new_tags: List[str]) -> None:
         """Set tags for this result."""
         if not isinstance(new_tags, list):
-            raise ExperimentDataError(f"The `tags` field of {type(self).__name__} must be a list.")
+            raise ExperimentDataError(
+                f"The `tags` field of {type(self).__name__} must be a list."
+            )
         self._db_data.tags = new_tags
         if self.auto_save:
             self.save()

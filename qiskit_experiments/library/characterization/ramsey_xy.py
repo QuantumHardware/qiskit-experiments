@@ -200,7 +200,8 @@ class RamseyXY(BaseExperiment, RestlessMixin):
             # create ramsey x
             if dt_unit:
                 assigned_x = ram_x.assign_parameters(
-                    {p_delay_sec: real_delay_in_sec, p_delay_dt: delay_dt}, inplace=False
+                    {p_delay_sec: real_delay_in_sec, p_delay_dt: delay_dt},
+                    inplace=False,
                 )
             else:
                 assigned_x = ram_x.assign_parameters(
@@ -213,7 +214,8 @@ class RamseyXY(BaseExperiment, RestlessMixin):
             # create ramsey y
             if dt_unit:
                 assigned_y = ram_y.assign_parameters(
-                    {p_delay_sec: real_delay_in_sec, p_delay_dt: delay_dt}, inplace=False
+                    {p_delay_sec: real_delay_in_sec, p_delay_dt: delay_dt},
+                    inplace=False,
                 )
             else:
                 assigned_y = ram_y.assign_parameters(

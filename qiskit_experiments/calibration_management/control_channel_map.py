@@ -20,7 +20,9 @@ from qiskit.pulse import ControlChannel
 class ControlChannelMap:
     """A class to help serialize control channel maps."""
 
-    def __init__(self, control_channel_map: Dict[Tuple[int, ...], List[ControlChannel]]):
+    def __init__(
+        self, control_channel_map: Dict[Tuple[int, ...], List[ControlChannel]]
+    ):
         """Setup the control channel map.
 
         Args:
@@ -39,7 +41,10 @@ class ControlChannelMap:
         """Return the settings used to initialize the mapping."""
         return {
             "class": self.__class__.__name__,
-            "map": [{"key": k, "value": [chan.index for chan in v]} for k, v in self._map.items()],
+            "map": [
+                {"key": k, "value": [chan.index for chan in v]}
+                for k, v in self._map.items()
+            ],
         }
 
     @classmethod
@@ -49,7 +54,10 @@ class ControlChannelMap:
         ch_map = config["map"]
 
         return cls(
-            {tuple(item["key"]): [ControlChannel(idx) for idx in item["value"]] for item in ch_map}
+            {
+                tuple(item["key"]): [ControlChannel(idx) for idx in item["value"]]
+                for item in ch_map
+            }
         )
 
     def __json_encode__(self):

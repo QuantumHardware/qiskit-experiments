@@ -59,9 +59,13 @@ class TestT2Ramsey(QiskitExperimentsTestCase):
 
         for user_p0 in [default_p0, dict()]:
             exp.analysis.set_options(p0=user_p0)
-            expdata = exp.run(backend=backend, shots=2000, seed_simulator=1).block_for_results()
+            expdata = exp.run(
+                backend=backend, shots=2000, seed_simulator=1
+            ).block_for_results()
             self.assertExperimentDone(expdata)
-            self.assertRoundTripSerializable(expdata, check_func=self.experiment_data_equiv)
+            self.assertRoundTripSerializable(
+                expdata, check_func=self.experiment_data_equiv
+            )
             self.assertRoundTripPickle(expdata, check_func=self.experiment_data_equiv)
 
             result = expdata.analysis_results("T2star")
@@ -94,10 +98,16 @@ class TestT2Ramsey(QiskitExperimentsTestCase):
         backend = NoisyDelayAerBackend(t1=t1, t2=t2ramsey)
 
         exp0 = T2Ramsey(
-            par_exp_qubits[0], delays[0], osc_freq=osc_freq[par_exp_qubits[0]], backend=backend
+            par_exp_qubits[0],
+            delays[0],
+            osc_freq=osc_freq[par_exp_qubits[0]],
+            backend=backend,
         )
         exp2 = T2Ramsey(
-            par_exp_qubits[1], delays[1], osc_freq=osc_freq[par_exp_qubits[1]], backend=backend
+            par_exp_qubits[1],
+            delays[1],
+            osc_freq=osc_freq[par_exp_qubits[1]],
+            backend=backend,
         )
 
         par_exp = ParallelExperiment([exp0, exp2])
@@ -121,7 +131,9 @@ class TestT2Ramsey(QiskitExperimentsTestCase):
         exp0.analysis.set_options(p0=exp0_p0)
         exp2.analysis.set_options(p0=exp2_p0)
 
-        expdata = par_exp.run(backend=backend, shots=2000, seed_simulator=1).block_for_results()
+        expdata = par_exp.run(
+            backend=backend, shots=2000, seed_simulator=1
+        ).block_for_results()
         self.assertExperimentDone(expdata)
 
         for i, qb in enumerate(par_exp_qubits):
@@ -132,7 +144,9 @@ class TestT2Ramsey(QiskitExperimentsTestCase):
                 delta=TestT2Ramsey.__tolerance__ * res_t2star.value.n,
             )
             self.assertEqual(
-                res_t2star.quality, "good", "Result quality bad for experiment on qubit " + str(i)
+                res_t2star.quality,
+                "good",
+                "Result quality bad for experiment on qubit " + str(i),
             )
             res_freq = expdata.child_data(i).analysis_results("Frequency")
             self.assertAlmostEqual(
@@ -141,7 +155,9 @@ class TestT2Ramsey(QiskitExperimentsTestCase):
                 delta=TestT2Ramsey.__tolerance__ * res_freq.value.n,
             )
             self.assertEqual(
-                res_freq.quality, "good", "Result quality bad for experiment on qubit " + str(i)
+                res_freq.quality,
+                "good",
+                "Result quality bad for experiment on qubit " + str(i),
             )
 
     def test_t2ramsey_concat_2_experiments(self):
@@ -154,7 +170,9 @@ class TestT2Ramsey(QiskitExperimentsTestCase):
         qubit = 0
         delays0 = list(range(1, 60, 2))
         osc_freq = 0.08
-        backend = NoisyDelayAerBackend(t1=[2 * estimated_t2ramsey], t2=[estimated_t2ramsey])
+        backend = NoisyDelayAerBackend(
+            t1=[2 * estimated_t2ramsey], t2=[estimated_t2ramsey]
+        )
 
         exp0 = T2Ramsey(qubit, delays0, osc_freq=osc_freq)
         default_p0 = {
@@ -175,7 +193,9 @@ class TestT2Ramsey(QiskitExperimentsTestCase):
         delays1 = list(range(2, 65, 2))
         exp1 = T2Ramsey(qubit, delays1, osc_freq=osc_freq)
         exp1.analysis.set_options(p0=default_p0)
-        expdata1 = exp1.run(backend=backend, analysis=None, shots=1000, seed_simulator=1)
+        expdata1 = exp1.run(
+            backend=backend, analysis=None, shots=1000, seed_simulator=1
+        )
         self.assertExperimentDone(expdata1)
 
         expdata1.add_data(expdata0.data())

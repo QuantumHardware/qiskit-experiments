@@ -67,75 +67,119 @@ class TestSettings(QiskitTestCase):
         obj = StoreArgs(1, 2, c="custom_c")
         self.assertEqual(obj.args, (1, 2))
         self.assertEqual(obj.kwargs, {"c": "custom_c", "d": "default_d"})
-        self.assertEqual(obj.settings, {"a": 1, "b": 2, "c": "custom_c", "d": "default_d"})
+        self.assertEqual(
+            obj.settings, {"a": 1, "b": 2, "c": "custom_c", "d": "default_d"}
+        )
 
     def test_standard_pos_kwargs(self):
         obj = StoreArgs(1, 2, "custom_c")
         self.assertEqual(obj.args, (1, 2))
         self.assertEqual(obj.kwargs, {"c": "custom_c", "d": "default_d"})
-        self.assertEqual(obj.settings, {"a": 1, "b": 2, "c": "custom_c", "d": "default_d"})
+        self.assertEqual(
+            obj.settings, {"a": 1, "b": 2, "c": "custom_c", "d": "default_d"}
+        )
 
     def test_standard_named_args(self):
         obj = StoreArgs(b=2, a=1, c="custom_c")
         self.assertEqual(obj.args, (1, 2))
         self.assertEqual(obj.kwargs, {"c": "custom_c", "d": "default_d"})
-        self.assertEqual(obj.settings, {"a": 1, "b": 2, "c": "custom_c", "d": "default_d"})
+        self.assertEqual(
+            obj.settings, {"a": 1, "b": 2, "c": "custom_c", "d": "default_d"}
+        )
 
     def test_variadic(self):
         obj = StoreArgsVariadicKw(1, 2, c="custom_c")
         self.assertEqual(obj.args, (1, 2))
         self.assertEqual(obj.kwargs, {"c": "custom_c", "d": "default_d"})
-        self.assertEqual(obj.settings, {"a": 1, "b": 2, "c": "custom_c", "d": "default_d"})
+        self.assertEqual(
+            obj.settings, {"a": 1, "b": 2, "c": "custom_c", "d": "default_d"}
+        )
 
     def test_variadic_pos_kwargs(self):
         obj = StoreArgsVariadicKw(1, 2, "custom_c")
         self.assertEqual(obj.args, (1, 2))
         self.assertEqual(obj.kwargs, {"c": "custom_c", "d": "default_d"})
-        self.assertEqual(obj.settings, {"a": 1, "b": 2, "c": "custom_c", "d": "default_d"})
+        self.assertEqual(
+            obj.settings, {"a": 1, "b": 2, "c": "custom_c", "d": "default_d"}
+        )
 
     def test_variadic_named_args(self):
         obj = StoreArgsVariadicKw(b=2, a=1, c="custom_c")
         self.assertEqual(obj.args, (1, 2))
         self.assertEqual(obj.kwargs, {"c": "custom_c", "d": "default_d"})
-        self.assertEqual(obj.settings, {"a": 1, "b": 2, "c": "custom_c", "d": "default_d"})
+        self.assertEqual(
+            obj.settings, {"a": 1, "b": 2, "c": "custom_c", "d": "default_d"}
+        )
 
     def test_variadic_kwargs(self):
         obj = StoreArgsVariadicKw(1, 2, d="custom_d", f="kwarg_f", g="kwarg_g")
         self.assertEqual(obj.args, (1, 2))
         self.assertEqual(
-            obj.kwargs, {"c": "default_c", "d": "custom_d", "f": "kwarg_f", "g": "kwarg_g"}
+            obj.kwargs,
+            {"c": "default_c", "d": "custom_d", "f": "kwarg_f", "g": "kwarg_g"},
         )
         self.assertEqual(
             obj.settings,
-            {"a": 1, "b": 2, "c": "default_c", "d": "custom_d", "f": "kwarg_f", "g": "kwarg_g"},
+            {
+                "a": 1,
+                "b": 2,
+                "c": "default_c",
+                "d": "custom_d",
+                "f": "kwarg_f",
+                "g": "kwarg_g",
+            },
         )
 
     def test_variadic_kwargs_pos_kwargs(self):
         obj = StoreArgsVariadicKw(1, 2, "custom_c", f="kwarg_f", g="kwarg_g")
         self.assertEqual(obj.args, (1, 2))
         self.assertEqual(
-            obj.kwargs, {"c": "custom_c", "d": "default_d", "f": "kwarg_f", "g": "kwarg_g"}
+            obj.kwargs,
+            {"c": "custom_c", "d": "default_d", "f": "kwarg_f", "g": "kwarg_g"},
         )
         self.assertEqual(
             obj.settings,
-            {"a": 1, "b": 2, "c": "custom_c", "d": "default_d", "f": "kwarg_f", "g": "kwarg_g"},
+            {
+                "a": 1,
+                "b": 2,
+                "c": "custom_c",
+                "d": "default_d",
+                "f": "kwarg_f",
+                "g": "kwarg_g",
+            },
         )
 
     def test_variadic_kwargs_named_args(self):
         obj = StoreArgsVariadicKw(b=2, a=1, d="custom_d", f="kwarg_f", g="kwarg_g")
         self.assertEqual(obj.args, (1, 2))
         self.assertEqual(
-            obj.kwargs, {"c": "default_c", "d": "custom_d", "f": "kwarg_f", "g": "kwarg_g"}
+            obj.kwargs,
+            {"c": "default_c", "d": "custom_d", "f": "kwarg_f", "g": "kwarg_g"},
         )
         self.assertEqual(
             obj.settings,
-            {"a": 1, "b": 2, "c": "default_c", "d": "custom_d", "f": "kwarg_f", "g": "kwarg_g"},
+            {
+                "a": 1,
+                "b": 2,
+                "c": "default_c",
+                "d": "custom_d",
+                "f": "kwarg_f",
+                "g": "kwarg_g",
+            },
         )
 
     def test_variadic_args(self):
-        obj = StoreArgsVariadic(1, 2, b="custom_b", c="custom_c", f="kwarg_f", g="kwarg_g")
+        obj = StoreArgsVariadic(
+            1, 2, b="custom_b", c="custom_c", f="kwarg_f", g="kwarg_g"
+        )
         self.assertEqual(obj.args, (1, 2))
         self.assertEqual(
             obj.kwargs,
-            {"b": "custom_b", "c": "custom_c", "d": "default_d", "f": "kwarg_f", "g": "kwarg_g"},
+            {
+                "b": "custom_b",
+                "c": "custom_c",
+                "d": "default_d",
+                "f": "kwarg_f",
+                "g": "kwarg_g",
+            },
         )

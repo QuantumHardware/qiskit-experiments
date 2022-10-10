@@ -25,7 +25,9 @@ import qiskit.pulse as pulse
 from qiskit_experiments.framework import ExperimentData, ParallelExperiment
 from qiskit_experiments.library import Rabi, EFRabi
 
-from qiskit_experiments.curve_analysis.standard_analysis.oscillation import OscillationAnalysis
+from qiskit_experiments.curve_analysis.standard_analysis.oscillation import (
+    OscillationAnalysis,
+)
 from qiskit_experiments.data_processing.data_processor import DataProcessor
 from qiskit_experiments.data_processing.nodes import Probability
 from qiskit_experiments.test.mock_iq_backend import MockIQBackend
@@ -43,7 +45,10 @@ class TestRabiEndToEnd(QiskitExperimentsTestCase):
         self.qubit = 1
 
         with pulse.build(name="x") as sched:
-            pulse.play(pulse.Drag(160, Parameter("amp"), 40, 0.4), pulse.DriveChannel(self.qubit))
+            pulse.play(
+                pulse.Drag(160, Parameter("amp"), 40, 0.4),
+                pulse.DriveChannel(self.qubit),
+            )
 
         self.sched = sched
 
@@ -64,7 +69,9 @@ class TestRabiEndToEnd(QiskitExperimentsTestCase):
         self.assertEqual(result.quality, "good")
         # The comparison is made against the object that exists in the backend for accurate testing
         self.assertAlmostEqual(
-            result.value.params["freq"], backend.experiment_helper.rabi_rate(), delta=test_tol
+            result.value.params["freq"],
+            backend.experiment_helper.rabi_rate(),
+            delta=test_tol,
         )
 
         # updating 'amplitude_to_angle' parameter in the experiment helper
@@ -75,7 +82,9 @@ class TestRabiEndToEnd(QiskitExperimentsTestCase):
         result = expdata.analysis_results(0)
         self.assertEqual(result.quality, "good")
         self.assertAlmostEqual(
-            result.value.params["freq"], backend.experiment_helper.rabi_rate(), delta=test_tol
+            result.value.params["freq"],
+            backend.experiment_helper.rabi_rate(),
+            delta=test_tol,
         )
 
         # updating 'amplitude_to_angle' parameter in the experiment helper and experiment options
@@ -87,7 +96,9 @@ class TestRabiEndToEnd(QiskitExperimentsTestCase):
         result = expdata.analysis_results(0)
         self.assertEqual(result.quality, "good")
         self.assertAlmostEqual(
-            result.value.params["freq"], backend.experiment_helper.rabi_rate(), delta=test_tol
+            result.value.params["freq"],
+            backend.experiment_helper.rabi_rate(),
+            delta=test_tol,
         )
 
     def test_wrong_processor(self):
@@ -131,7 +142,8 @@ class TestEFRabi(QiskitExperimentsTestCase):
         with pulse.build(name="x") as sched:
             with pulse.frequency_offset(-300e6, pulse.DriveChannel(self.qubit)):
                 pulse.play(
-                    pulse.Drag(160, Parameter("amp"), 40, 0.4), pulse.DriveChannel(self.qubit)
+                    pulse.Drag(160, Parameter("amp"), 40, 0.4),
+                    pulse.DriveChannel(self.qubit),
                 )
 
         self.sched = sched
@@ -152,7 +164,9 @@ class TestEFRabi(QiskitExperimentsTestCase):
         result = expdata.analysis_results(1)
 
         self.assertEqual(result.quality, "good")
-        self.assertTrue(abs(result.value.n - backend.experiment_helper.rabi_rate()) < test_tol)
+        self.assertTrue(
+            abs(result.value.n - backend.experiment_helper.rabi_rate()) < test_tol
+        )
 
     def test_ef_rabi_circuit(self):
         """Test the EFRabi experiment end to end."""
@@ -278,7 +292,9 @@ class TestRabiAnalysis(QiskitExperimentsTestCase):
         amplitudes = np.linspace(-0.25, 0.25, 31)
         expected_rate, test_tol = 2.0, 0.2
 
-        experiment_data.add_data(self.simulate_experiment_data(thetas, amplitudes, shots=400))
+        experiment_data.add_data(
+            self.simulate_experiment_data(thetas, amplitudes, shots=400)
+        )
 
         data_processor = DataProcessor("counts", [Probability(outcome="1")])
 
@@ -287,7 +303,9 @@ class TestRabiAnalysis(QiskitExperimentsTestCase):
         )
         result = experiment_data.analysis_results(0)
         self.assertEqual(result.quality, "good")
-        self.assertAlmostEqual(result.value.params["freq"], expected_rate, delta=test_tol)
+        self.assertAlmostEqual(
+            result.value.params["freq"], expected_rate, delta=test_tol
+        )
 
     def test_bad_analysis(self):
         """Test the Rabi analysis."""
@@ -296,7 +314,9 @@ class TestRabiAnalysis(QiskitExperimentsTestCase):
         thetas = np.linspace(0.0, np.pi / 4, 31)
         amplitudes = np.linspace(0.0, 0.95, 31)
 
-        experiment_data.add_data(self.simulate_experiment_data(thetas, amplitudes, shots=200))
+        experiment_data.add_data(
+            self.simulate_experiment_data(thetas, amplitudes, shots=200)
+        )
 
         data_processor = DataProcessor("counts", [Probability(outcome="1")])
 
@@ -317,7 +337,9 @@ class TestCompositeExperiment(QiskitExperimentsTestCase):
         experiments = []
         for qubit in range(3):
             with pulse.build() as sched:
-                pulse.play(pulse.Gaussian(160, Parameter("amp"), 40), pulse.DriveChannel(qubit))
+                pulse.play(
+                    pulse.Gaussian(160, Parameter("amp"), 40), pulse.DriveChannel(qubit)
+                )
 
             experiments.append(Rabi(qubit, sched, amplitudes=[0.5]))
 

@@ -67,12 +67,16 @@ def _run_pylint(ref, paths, pylint_args):
             f"{stderr.strip().decode('ascii')}"
         )
         sys.exit(128)
-    changed_paths = [path.decode("ascii") for path in stdout.split(b"\x00") if len(path) > 0]
+    changed_paths = [
+        path.decode("ascii") for path in stdout.split(b"\x00") if len(path) > 0
+    ]
     if len(changed_paths) == 0:
         print(f"No changed files in {' '.join(paths)}")
         sys.exit(0)
     changed_paths_pretty = "\n    ".join(changed_paths)
-    print(f"Running pylint on {len(changed_paths)} changed files:\n    {changed_paths_pretty}")
+    print(
+        f"Running pylint on {len(changed_paths)} changed files:\n    {changed_paths_pretty}"
+    )
     lint.Run([*pylint_args, "--", *changed_paths])
 
 

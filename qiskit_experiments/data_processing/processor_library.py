@@ -74,7 +74,9 @@ def get_kerneled_processor(
     return DataProcessor("memory", node)
 
 
-def get_processor(experiment_data: ExperimentData, analysis_options: Options) -> DataProcessor:
+def get_processor(
+    experiment_data: ExperimentData, analysis_options: Options
+) -> DataProcessor:
     """Get a DataProcessor that produces a continuous signal given the options.
 
     Args:
@@ -126,7 +128,9 @@ def get_processor(experiment_data: ExperimentData, analysis_options: Options) ->
     meas_level = metadata.get("meas_level", MeasLevel.CLASSIFIED)
     meas_return = metadata.get("meas_return", MeasReturnType.AVERAGE)
     normalize = analysis_options.get("normalization", True)
-    dimensionality_reduction = analysis_options.get("dimensionality_reduction", ProjectorType.SVD)
+    dimensionality_reduction = analysis_options.get(
+        "dimensionality_reduction", ProjectorType.SVD
+    )
 
     if meas_level == MeasLevel.CLASSIFIED:
         num_qubits = len(metadata.get("physical_qubits", [0]))

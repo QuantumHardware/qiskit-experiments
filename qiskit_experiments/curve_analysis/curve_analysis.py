@@ -23,14 +23,22 @@ import numpy as np
 from uncertainties import unumpy as unp, UFloat
 
 from qiskit_experiments.exceptions import AnalysisError
-from qiskit_experiments.framework import ExperimentData, AnalysisResultData, AnalysisConfig
+from qiskit_experiments.framework import (
+    ExperimentData,
+    AnalysisResultData,
+    AnalysisConfig,
+)
 from qiskit_experiments.data_processing.exceptions import DataProcessorError
 from qiskit_experiments.warnings import deprecated_function
 
 from .base_curve_analysis import BaseCurveAnalysis, PARAMS_ENTRY_PREFIX
 from .curve_data import CurveData, FitOptions, CurveFitResult
 from .data_processing import multi_mean_xy_data, data_sort
-from .utils import analysis_result_to_repr, eval_with_uncertainties, convert_lmfit_result
+from .utils import (
+    analysis_result_to_repr,
+    eval_with_uncertainties,
+    convert_lmfit_result,
+)
 
 
 class CurveAnalysis(BaseCurveAnalysis):
@@ -173,7 +181,10 @@ class CurveAnalysis(BaseCurveAnalysis):
         unite_params = []
         for model in self._models:
             for name in model.param_names:
-                if name not in unite_params and name not in self.options.fixed_parameters:
+                if (
+                    name not in unite_params
+                    and name not in self.options.fixed_parameters
+                ):
                     unite_params.append(name)
         return unite_params
 
@@ -211,7 +222,9 @@ class CurveAnalysis(BaseCurveAnalysis):
         try:
             data = self.__processed_data_set[label]
         except KeyError as ex:
-            raise AnalysisError(f"Requested data with label {label} does not exist.") from ex
+            raise AnalysisError(
+                f"Requested data with label {label} does not exist."
+            ) from ex
 
         if series_name is None:
             return data
@@ -248,13 +261,17 @@ class CurveAnalysis(BaseCurveAnalysis):
             analyzed_data = raw_data
         else:
             analyzed_data = [
-                d for d in raw_data if _matched(d["metadata"], **self.options.filter_data)
+                d
+                for d in raw_data
+                if _matched(d["metadata"], **self.options.filter_data)
             ]
 
         x_key = self.options.x_key
 
         try:
-            xdata = np.asarray([datum["metadata"][x_key] for datum in analyzed_data], dtype=float)
+            xdata = np.asarray(
+                [datum["metadata"][x_key] for datum in analyzed_data], dtype=float
+            )
         except KeyError as ex:
             raise DataProcessorError(
                 f"X value key {x_key} is not defined in circuit metadata."
@@ -387,7 +404,9 @@ class CurveAnalysis(BaseCurveAnalysis):
         # Bind fixed parameters if not empty
         if self.options.fixed_parameters:
             fixed_parameters = {
-                k: v for k, v in self.options.fixed_parameters.items() if k in unite_parameter_names
+                k: v
+                for k, v in self.options.fixed_parameters.items()
+                if k in unite_parameter_names
             }
             default_fit_opt.p0.set_if_empty(**fixed_parameters)
         else:
@@ -553,7 +572,9 @@ class CurveAnalysis(BaseCurveAnalysis):
                         # This is the case when fit model exist but no data to fit is provided.
                         # For example, experiment may omit experimenting with some setting.
                         continue
-                    interp_x = np.linspace(np.min(sub_data.x), np.max(sub_data.x), num=100)
+                    interp_x = np.linspace(
+                        np.min(sub_data.x), np.max(sub_data.x), num=100
+                    )
 
                     y_data_with_uncertainty = eval_with_uncertainties(
                         x=interp_x,
@@ -585,7 +606,9 @@ class CurveAnalysis(BaseCurveAnalysis):
                 for res in analysis_results:
                     if isinstance(res.value, (float, UFloat)):
                         report_description += f"{analysis_result_to_repr(res)}\n"
-                report_description += r"reduced-$\chi^2$ = " + f"{fit_data.reduced_chisq: .4g}"
+                report_description += (
+                    r"reduced-$\chi^2$ = " + f"{fit_data.reduced_chisq: .4g}"
+                )
                 self.drawer.draw_fit_report(description=report_description)
 
         # Add raw data points

@@ -23,7 +23,9 @@ from qiskit_experiments.library import QubitSpectroscopy
 from qiskit_experiments.calibration_management.calibrations import Calibrations
 from qiskit_experiments.calibration_management.update_library import Frequency
 from qiskit_experiments.test.mock_iq_backend import MockIQBackend
-from qiskit_experiments.test.mock_iq_helpers import MockIQSpectroscopyHelper as SpectroscopyHelper
+from qiskit_experiments.test.mock_iq_helpers import (
+    MockIQSpectroscopyHelper as SpectroscopyHelper,
+)
 
 
 class TestAmplitudeUpdate(QiskitExperimentsTestCase):
@@ -38,11 +40,17 @@ class TestAmplitudeUpdate(QiskitExperimentsTestCase):
         axp = Parameter("amp")
         chan = Parameter("ch0")
         with pulse.build(name="xp") as xp:
-            pulse.play(pulse.Gaussian(duration=160, amp=axp, sigma=40), pulse.DriveChannel(chan))
+            pulse.play(
+                pulse.Gaussian(duration=160, amp=axp, sigma=40),
+                pulse.DriveChannel(chan),
+            )
 
         ax90p = Parameter("amp")
         with pulse.build(name="x90p") as x90p:
-            pulse.play(pulse.Gaussian(duration=160, amp=ax90p, sigma=40), pulse.DriveChannel(chan))
+            pulse.play(
+                pulse.Gaussian(duration=160, amp=ax90p, sigma=40),
+                pulse.DriveChannel(chan),
+            )
 
         self.x90p = x90p
 
@@ -85,6 +93,10 @@ class TestFrequencyUpdate(QiskitExperimentsTestCase):
 
         # Test the integration with the Calibrations
         cals = Calibrations.from_backend(FakeAthensV2())
-        self.assertNotEqual(cals.get_parameter_value(cals.__drive_freq_parameter__, qubit), value)
+        self.assertNotEqual(
+            cals.get_parameter_value(cals.__drive_freq_parameter__, qubit), value
+        )
         Frequency.update(cals, exp_data)
-        self.assertEqual(cals.get_parameter_value(cals.__drive_freq_parameter__, qubit), value)
+        self.assertEqual(
+            cals.get_parameter_value(cals.__drive_freq_parameter__, qubit), value
+        )

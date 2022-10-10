@@ -55,16 +55,24 @@ class TestProcessTomography(QiskitExperimentsTestCase):
                 # Check state is density matrix
                 state = filter_results(results, "state").value
                 self.assertTrue(
-                    isinstance(state, qi.Choi), msg=f"{fitter} fitted state is not a Choi matrix"
+                    isinstance(state, qi.Choi),
+                    msg=f"{fitter} fitted state is not a Choi matrix",
                 )
 
                 # Check fit state fidelity
                 fid = filter_results(results, "process_fidelity").value
-                self.assertGreater(fid, f_threshold, msg=f"{fitter} fit fidelity is low")
+                self.assertGreater(
+                    fid, f_threshold, msg=f"{fitter} fit fidelity is low"
+                )
                 # Manually check fidelity
-                target_fid = qi.process_fidelity(state, target, require_tp=False, require_cp=False)
+                target_fid = qi.process_fidelity(
+                    state, target, require_tp=False, require_cp=False
+                )
                 self.assertAlmostEqual(
-                    fid, target_fid, places=6, msg=f"{fitter} result fidelity is incorrect"
+                    fid,
+                    target_fid,
+                    places=6,
+                    msg=f"{fitter} result fidelity is incorrect",
                 )
 
     def test_cvxpy_gaussian_lstsq_cx(self):
@@ -87,14 +95,17 @@ class TestProcessTomography(QiskitExperimentsTestCase):
         # Check state is density matrix
         state = filter_results(results, "state").value
         self.assertTrue(
-            isinstance(state, qi.Choi), msg=f"{fitter} fitted state is not a Choi matrix"
+            isinstance(state, qi.Choi),
+            msg=f"{fitter} fitted state is not a Choi matrix",
         )
 
         # Check fit state fidelity
         fid = filter_results(results, "process_fidelity").value
         self.assertGreater(fid, f_threshold, msg=f"{fitter} fit fidelity is low")
         # Manually check fidelity
-        target_fid = qi.process_fidelity(state, target, require_tp=False, require_cp=False)
+        target_fid = qi.process_fidelity(
+            state, target, require_tp=False, require_cp=False
+        )
         self.assertAlmostEqual(
             fid, target_fid, places=6, msg=f"{fitter} result fidelity is incorrect"
         )
@@ -113,7 +124,9 @@ class TestProcessTomography(QiskitExperimentsTestCase):
             circ.append(op, [i])
 
         num_meas = len(qubits)
-        exp = ProcessTomography(circ, measurement_qubits=qubits, preparation_qubits=qubits)
+        exp = ProcessTomography(
+            circ, measurement_qubits=qubits, preparation_qubits=qubits
+        )
         tomo_circuits = exp.circuits()
 
         # Check correct number of circuits are generated
@@ -124,7 +137,9 @@ class TestProcessTomography(QiskitExperimentsTestCase):
         for circ in tomo_circuits:
             meta = circ.metadata
             clbits = meta.get("clbits")
-            self.assertEqual(clbits, list(range(num_meas)), msg="metadata clbits is incorrect")
+            self.assertEqual(
+                clbits, list(range(num_meas)), msg="metadata clbits is incorrect"
+            )
 
         # Check analysis target is correct
         target_state = exp.analysis.options.target
@@ -158,9 +173,15 @@ class TestProcessTomography(QiskitExperimentsTestCase):
 
         # Check Choi matrix
         state = expdata.analysis_results("state").value
-        self.assertTrue(isinstance(state, qi.Choi), msg="fitted state is not a Choi matrix")
-        self.assertEqual(state.input_dims(), (2,), msg="fitted state has wrong input dims")
-        self.assertEqual(state.output_dims(), (2,), msg="fitted state has wrong output dims")
+        self.assertTrue(
+            isinstance(state, qi.Choi), msg="fitted state is not a Choi matrix"
+        )
+        self.assertEqual(
+            state.input_dims(), (2,), msg="fitted state has wrong input dims"
+        )
+        self.assertEqual(
+            state.output_dims(), (2,), msg="fitted state has wrong output dims"
+        )
 
         # Check fit state fidelity
         f_threshold = 0.99
@@ -190,12 +211,18 @@ class TestProcessTomography(QiskitExperimentsTestCase):
 
         # Check Choi matrix
         state = expdata.analysis_results("state").value
-        self.assertTrue(isinstance(state, qi.Choi), msg="fitted state is not a Choi matrix")
-        self.assertEqual(
-            state.input_dims(), len(prep_qubits) * (2,), msg="fitted state has wrong input dims"
+        self.assertTrue(
+            isinstance(state, qi.Choi), msg="fitted state is not a Choi matrix"
         )
         self.assertEqual(
-            state.output_dims(), len(meas_qubits) * (2,), msg="fitted state has wrong output dims"
+            state.input_dims(),
+            len(prep_qubits) * (2,),
+            msg="fitted state has wrong input dims",
+        )
+        self.assertEqual(
+            state.output_dims(),
+            len(meas_qubits) * (2,),
+            msg="fitted state has wrong output dims",
         )
 
         # Check fit state fidelity
@@ -224,7 +251,9 @@ class TestProcessTomography(QiskitExperimentsTestCase):
 
         # Run
         backend = AerSimulator(seed_simulator=9000)
-        exp = ProcessTomography(circ, measurement_qubits=qubits, preparation_qubits=qubits)
+        exp = ProcessTomography(
+            circ, measurement_qubits=qubits, preparation_qubits=qubits
+        )
         expdata = exp.run(backend)
         self.assertExperimentDone(expdata)
         results = expdata.analysis_results()
@@ -234,15 +263,21 @@ class TestProcessTomography(QiskitExperimentsTestCase):
 
         # Check state is density matrix
         state = filter_results(results, "state").value
-        self.assertTrue(isinstance(state, qi.Choi), msg="fitted state is not a Choi matrix")
+        self.assertTrue(
+            isinstance(state, qi.Choi), msg="fitted state is not a Choi matrix"
+        )
 
         # Check fit state fidelity
         fid = filter_results(results, "process_fidelity").value
         self.assertGreater(fid, f_threshold, msg="fit fidelity is low")
 
         # Manually check fidelity
-        target_fid = qi.process_fidelity(state, target, require_tp=False, require_cp=False)
-        self.assertAlmostEqual(fid, target_fid, places=6, msg="result fidelity is incorrect")
+        target_fid = qi.process_fidelity(
+            state, target, require_tp=False, require_cp=False
+        )
+        self.assertAlmostEqual(
+            fid, target_fid, places=6, msg="result fidelity is incorrect"
+        )
 
     def test_qpt_teleport(self):
         """Test subset state tomography generation"""
@@ -251,7 +286,9 @@ class TestProcessTomography(QiskitExperimentsTestCase):
 
         # Teleport qubit 0 -> 2
         backend = AerSimulator(seed_simulator=9000)
-        exp = ProcessTomography(teleport_circuit(), measurement_qubits=[2], preparation_qubits=[0])
+        exp = ProcessTomography(
+            teleport_circuit(), measurement_qubits=[2], preparation_qubits=[0]
+        )
         expdata = exp.run(backend, shots=10000)
         self.assertExperimentDone(expdata)
         results = expdata.analysis_results()
@@ -261,7 +298,9 @@ class TestProcessTomography(QiskitExperimentsTestCase):
 
         # Check state is density matrix
         state = filter_results(results, "state").value
-        self.assertTrue(isinstance(state, qi.Choi), msg="fitted state is not a Choi matrix")
+        self.assertTrue(
+            isinstance(state, qi.Choi), msg="fitted state is not a Choi matrix"
+        )
 
         # Manually check fidelity
         fid = qi.process_fidelity(state, require_tp=False, require_cp=False)
@@ -269,7 +308,9 @@ class TestProcessTomography(QiskitExperimentsTestCase):
 
     def test_experiment_config(self):
         """Test converting to and from config works"""
-        exp = ProcessTomography(teleport_circuit(), measurement_qubits=[2], preparation_qubits=[0])
+        exp = ProcessTomography(
+            teleport_circuit(), measurement_qubits=[2], preparation_qubits=[0]
+        )
         loaded_exp = ProcessTomography.from_config(exp.config())
         self.assertNotEqual(exp, loaded_exp)
         self.assertTrue(self.json_equiv(exp, loaded_exp))

@@ -33,10 +33,15 @@ class BackendData:
 
     def _parse_additional_data(self):
         # data specific parsing not done yet in qiskit-terra
-        if hasattr(self._backend, "_conf_dict") and self._backend._conf_dict["open_pulse"]:
+        if (
+            hasattr(self._backend, "_conf_dict")
+            and self._backend._conf_dict["open_pulse"]
+        ):
             if "u_channel_lo" not in self._backend._conf_dict:
                 self._backend._conf_dict["u_channel_lo"] = []  # to avoid terra bug
-            self._pulse_conf = PulseBackendConfiguration.from_dict(self._backend._conf_dict)
+            self._pulse_conf = PulseBackendConfiguration.from_dict(
+                self._backend._conf_dict
+            )
 
     @property
     def name(self):
@@ -108,7 +113,9 @@ class BackendData:
         """Returns the backend's time constraint granularity"""
         try:
             if self._v1:
-                return self._backend.configuration().timing_constraints.get("granularity", 1)
+                return self._backend.configuration().timing_constraints.get(
+                    "granularity", 1
+                )
             elif self._v2:
                 return self._backend.target.granularity
         except AttributeError:
@@ -120,7 +127,9 @@ class BackendData:
         """Returns the backend's time constraint minimum duration"""
         try:
             if self._v1:
-                return self._backend.configuration().timing_constraints.get("min_length", 0)
+                return self._backend.configuration().timing_constraints.get(
+                    "min_length", 0
+                )
             elif self._v2:
                 return self._backend.target.min_length
         except AttributeError:
@@ -132,7 +141,9 @@ class BackendData:
         """Returns the backend's time constraint pulse alignment"""
         try:
             if self._v1:
-                return self._backend.configuration().timing_constraints.get("pulse_alignment", 1)
+                return self._backend.configuration().timing_constraints.get(
+                    "pulse_alignment", 1
+                )
             elif self._v2:
                 return self._backend.target.pulse_alignment
         except AttributeError:
@@ -144,7 +155,9 @@ class BackendData:
         """Returns the backend's time constraint acquire alignment"""
         try:
             if self._v1:
-                return self._backend.configuration().timing_constraints.get("acquire_alignment", 1)
+                return self._backend.configuration().timing_constraints.get(
+                    "acquire_alignment", 1
+                )
             elif self._v2:
                 # currently has a typo in terra
                 if hasattr(self._backend.target, "acquire_alignment"):
@@ -211,7 +224,9 @@ class BackendData:
         if self._v1:
             return getattr(self._backend.defaults(), "qubit_freq_est", [])
         elif self._v2:
-            return [property.frequency for property in self._backend.target.qubit_properties]
+            return [
+                property.frequency for property in self._backend.target.qubit_properties
+            ]
         return []
 
     @property
@@ -248,7 +263,9 @@ class BackendData:
             either of its existing implementations in Terra.
         """
         if self._v1:
-            if self._backend.configuration().simulator or isinstance(self._backend, FakeBackend):
+            if self._backend.configuration().simulator or isinstance(
+                self._backend, FakeBackend
+            ):
                 return True
         if self._v2:
             if isinstance(self._backend, (FakeBackendV2, fake_backend.FakeBackendV2)):

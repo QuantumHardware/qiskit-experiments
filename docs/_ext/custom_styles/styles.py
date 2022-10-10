@@ -205,7 +205,9 @@ class ExperimentDocstring(QiskitExperimentDocstring):
                 )
             )
         else:
-            exp_option_desc.append("No experiment option available for this experiment.")
+            exp_option_desc.append(
+                "No experiment option available for this experiment."
+            )
 
         sectioned_docstring["experiment_opts"] = exp_option_desc
 
