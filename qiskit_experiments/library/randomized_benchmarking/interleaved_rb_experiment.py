@@ -25,6 +25,7 @@ from qiskit.providers.backend import Backend
 
 from .rb_experiment import StandardRB, SequenceElementType
 from .interleaved_rb_analysis import InterleavedRBAnalysis
+from .clifford_utils import CliffordUtils, _clifford_1q_int_to_instruction
 
 
 class InterleavedRB(StandardRB):
@@ -50,19 +51,20 @@ class InterleavedRB(StandardRB):
 
     def __init__(
         self,
-        interleaved_element: Union[QuantumCircuit, Instruction, Clifford],
+        interleaved_clifford_index: int,
+        # interleaved_element: Union[QuantumCircuit, Instruction, Clifford],
         qubits: Sequence[int],
         lengths: Iterable[int],
         backend: Optional[Backend] = None,
         num_samples: int = 3,
         seed: Optional[Union[int, SeedSequence, BitGenerator, Generator]] = None,
         full_sampling: bool = False,
+        large_amplitude: Optional[int] = None,
     ):
         """Initialize an interleaved randomized benchmarking experiment.
 
         Args:
-            interleaved_element: The element to interleave,
-                    given either as a group element or as an instruction/circuit
+            interleaved_clifford_index: The clifford index to interleave
             qubits: list of physical qubits for the experiment.
             lengths: A list of RB sequences lengths.
             backend: The backend to run the experiment on.
@@ -79,16 +81,19 @@ class InterleavedRB(StandardRB):
         Raises:
             QiskitError: the interleaved_element is not convertible to Clifford object.
         """
-        try:
-            self._interleaved_elem = Clifford(interleaved_element)
-        except QiskitError as err:
-            raise QiskitError(
-                f"Interleaved element {interleaved_element.name} could not be converted to Clifford."
-            ) from err
+
+        # try:
+        #     self._interleaved_elem = Clifford(interleaved_element)
+        # except QiskitError as err:
+        #     raise QiskitError(
+        #         f"Interleaved element {interleaved_element.name} could not be converted to Clifford."
+        #     ) from err
         # Convert interleaved element to operation
-        self._interleaved_op = interleaved_element
-        if not isinstance(interleaved_element, Instruction):
-            self._interleaved_op = interleaved_element.to_instruction()
+        # interleaved_element = _clifford_1q_int_to_instruction(interleaved_clifford_index)
+        self._interleaved_elem = _clifford_1q_int_to_instruction(interleaved_clifford_index)
+        self._interleaved_op = _clifford_1q_int_to_instruction(interleaved_clifford_index)
+        # if not isinstance(interleaved_element, Instruction):
+        #     self._interleaved_op = interleaved_element.to_instruction()
         super().__init__(
             qubits,
             lengths,
@@ -96,6 +101,7 @@ class InterleavedRB(StandardRB):
             num_samples=num_samples,
             seed=seed,
             full_sampling=full_sampling,
+            large_amplitude=large_amplitude,
         )
         self.analysis = InterleavedRBAnalysis()
         self.analysis.set_options(outcome="0" * self.num_qubits)

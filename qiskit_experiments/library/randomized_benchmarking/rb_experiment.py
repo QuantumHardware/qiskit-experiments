@@ -21,7 +21,7 @@ from typing import Union, Iterable, Optional, List, Sequence
 import numpy as np
 from numpy.random import Generator, default_rng
 from numpy.random.bit_generator import BitGenerator, SeedSequence
-
+import qiskit.pulse as pulse
 from qiskit.circuit import QuantumCircuit, Instruction
 from qiskit.exceptions import QiskitError
 from qiskit.providers.backend import Backend
@@ -76,6 +76,7 @@ class StandardRB(BaseExperiment, RestlessMixin):
         num_samples: int = 3,
         seed: Optional[Union[int, SeedSequence, BitGenerator, Generator]] = None,
         full_sampling: Optional[bool] = False,
+        large_amplitude: Optional[int] = None,
     ):
         """Initialize a standard randomized benchmarking experiment.
 
@@ -121,6 +122,27 @@ class StandardRB(BaseExperiment, RestlessMixin):
         ## >> ADDED to inverse debugging
         self.inv_indexes = []
         ## << END
+
+        if large_amplitude:
+            defaults = backend.defaults()
+            calibrations = defaults.instruction_schedule_map
+            params = calibrations.get("sx", qubits[0]).instructions[0][1].operands[0].parameters
+
+            sx_schedule = pulse.Schedule()
+            drive_chan = calibrations.get("sx", qubits[0]).channels[0]
+            sx_schedule += pulse.Play(
+                pulse.Drag(
+                    duration=params["duration"],
+                    amp=params["amp"] * large_amplitude,
+                    sigma=params["sigma"],
+                    beta=params["beta"],
+                    name="X_2",
+                    limit_amplitude=10,
+                ),
+                drive_chan,
+            )
+            inst_map = backend.defaults().instruction_schedule_map
+            inst_map.add("sx", qubits[0], sx_schedule)
 
     @classmethod
     def _default_experiment_options(cls) -> Options:
