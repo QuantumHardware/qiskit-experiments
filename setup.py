@@ -22,7 +22,7 @@ with open("requirements.txt") as f:
 
 version_path = os.path.abspath(
     os.path.join(
-        os.path.join(os.path.dirname(__file__), "qiskit_experiments_modified"),
+        os.path.join(os.path.dirname(__file__), "qiskit_experiments"),
         "VERSION.txt",
     )
 )
@@ -35,7 +35,7 @@ with open(README_PATH) as readme_file:
     README = readme_file.read()
 
 setup(
-    name="qiskit-experiments-modified",
+    name="qiskit-experiments",
     version=version,
     description="Software for developing quantum computing programs",
     long_description=README,

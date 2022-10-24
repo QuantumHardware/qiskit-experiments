@@ -90,10 +90,11 @@ class InterleavedRB(StandardRB):
         #     ) from err
         # Convert interleaved element to operation
         # interleaved_element = _clifford_1q_int_to_instruction(interleaved_clifford_index)
-        self._interleaved_elem = _clifford_1q_int_to_instruction(interleaved_clifford_index)
-        self._interleaved_op = _clifford_1q_int_to_instruction(interleaved_clifford_index)
         # if not isinstance(interleaved_element, Instruction):
         #     self._interleaved_op = interleaved_element.to_instruction()
+
+        self._interleaved_elem = _clifford_1q_int_to_instruction(interleaved_clifford_index)
+        self._interleaved_op = _clifford_1q_int_to_instruction(interleaved_clifford_index)
         super().__init__(
             qubits,
             lengths,
